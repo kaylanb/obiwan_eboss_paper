@@ -294,6 +294,12 @@ We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and 
 
 To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
 
+\subsection{Randoms}
+
+We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
+
+To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}.
+
 \subsection{Obiwan Randoms: DR5 data}
 \label{sec:dr5}
 
