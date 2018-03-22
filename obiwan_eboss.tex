@@ -313,7 +313,7 @@ Our simulated galaxies must be a representative sample of real ELGs or else we c
 
 In this paper, we only concern ourselves with Emission Line Galaxies (ELGs). These are blue star forming galaxies that are spectroscopically identified by a strong OII emission line. The DEEP2 Galaxy Redshift Survey (DEEP2, references) collected one of the largest samples of ELG spectra to date, since the spectral resolution resolves the OII emission line. To model the real population of ELGs, we match our DR3 Tractor catalogues to the DEEP2 catalogues using a 1\arcsec matching radius.
 
-This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra), brightness (g, r, z flux), and shape (half light radii, ellipticity) information. While the sample is biased by the DEEP2 selection function, the depth of DR5 imaging, and Tractor’s ability to measure the centroid, brightness, and shape, this is as good as we can do with publicly available data. The best possible sample is probably to use Hyper Suprime-Cam Subaru Survey (HSC-SS) imaging in the DEEP2 fields (Hayashi et al. 2017, Mehta et al. 2017).
+This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra), brightness (g, r, z flux), and shape (half light radii, ellipticity) information. While the sample is biased by the DEEP2 selection function, the depth of DR5 imaging, and \tractor’s ability to measure the centroid, brightness, and shape, this is as good as we can do with publicly available data. The best possible sample is probably to use Hyper Suprime-Cam Subaru Survey (HSC-SS) imaging in the DEEP2 fields (Hayashi et al. 2017, Mehta et al. 2017).
 
 We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. 
 
@@ -322,6 +322,8 @@ We model the redshift-brightness-shape parameter space with Gaussian Mixture Mod
 We inject simulated galaxies into X deg$^2$ of DR5 imaging at density of X galaxies / deg$^2$. About X\% of the simulated galaxies are DESI ELGs, so this is X times larger than DESI target density. 
 
 \subsection{Simulated Galaxy Sample}
+
+We match DR3 to DEEP2 cutting to only spectroscopically confirmed galaxies. 
 
 \dev comprise less than 3\% of the DESI sample, and do not model them because the sample size is too small to capture the underlying distributions in redshift and brightness. For DESI, we apply the following cuts,
 
@@ -364,9 +366,39 @@ We inject simulated galaxies into all DECaLS imaging (DR3 and ``DR3-plus") used 
 \label{fig:ccds-eboss}
 \end{figure}
 
-\subsection{Simulated Galaxy Sample}
+\subsection{Brightness, shape, and redshift for eBOSS ELG targets}
 
-\dev are 9\% of the eBOSS sample and they fill in parameter space enough for use to model. For eBOSS, we find that the redshift, brightness, and shape distributions of eBOSS SGC targets with eBOSS spectra is reproduced by the DR3-DEEP2 catalogue cut to the eBOSS ELG TS box. We use the SGC data, because it is deeper than NGC and complete to about g =  22.8 (NGC complete to about g = 22.3). SGC is also 70\% of the data set, so we drop the NGC data. We are interested in redshift, brightness, and shape outside of the eBOSS TS box too, so the DR3-DEEP2 sample cut to 0.2 mag padding tells us that.
+We use the joint tables (provided by Anand) of \tractor \, catalogue measurements for each eBOSS ELG target and the eBOSS spectra obtained for that target,
+\begin{itemize}
+\item \verb|eBOSS.ELG.obiwan.eboss21.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss2122.v5_10_7.fits| 
+\item \verb|eBOSS.ELG.obiwan.eboss22.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_7.fits|
+\end{itemize}
+
+\noindent to build a Gaussian Mixture Model for the brightness, shape, and redshift of eBOSS ELG targets. We assume that all galaxies that \tractor \, classifies as type PSF are compact or unresolved. We reclassify them as EXP with $\rhalf = \text{avg}(\text{FWHM}) / 2)$, where the average is over all bands. We also reclassify SIMP sources as EXP. We drop COMP sources because these comprise less than 1\% of the sample. We only keep galaxies having reasonable \tractor\, measured $\rhalf$,
+\begin{itemize}
+\item \verb|z_flag == 1 & brick_primary & |$\rhalf < 10$\arcsec.
+\end{itemize}
+DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the above sample into separate DEV and EXP samples. Fig. \ref{fig:ngc-incomplete} also shows that the NGC region is not complete for the \gb \,mag of the eBOSS ELGs, so we further trim the samples to just the SGC region. This results in about 7,500 DEV and 78,000 EXP galaxies.  
+%9\% of the original sample is DEV, but they fill in parameter space enough for use to model. 
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{dev_brighter}
+ \caption{Histograms of \gb, \rband, \zb mag (top) and redshift and $\rhalf$ (bottom) for eBOSS ELG targets that are spectroscopically confirmed to be galaxies. DEV galaxies (red) are systematically larger and about 1 mag brighter than EXP galaxies, in all bands. We reclassify PSF sources as EXP with $\rhalf = \text{avg}(\text{FWHM}) / 2)$, where the average is over all bands.}
+ \label{fig:dev-brighter}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=5 cm]{ngc_incomplete}
+ \caption{The eBOSS NGC footprint is not deep enough to detect eBOSS ELGs with $g < 22.825$ mag. We remove galaxies in the NGC region from our sample of representative ELGs.}
+ \label{fig:ngc-incomplete}
+\end{figure}
+
+\subsection{Brightness, shape, and redshift for ELGs outside the eBOSS Target Selection Box}
+
+For eBOSS, we find that the redshift, brightness, and shape distributions of eBOSS SGC targets with eBOSS spectra is reproduced by the DR3-DEEP2 catalogue cut to the eBOSS ELG TS box. We use the SGC data, because it is deeper than NGC and complete to about g =  22.8 (NGC complete to about g = 22.3). SGC is also 70\% of the data set, so we drop the NGC data. We are interested in redshift, brightness, and shape outside of the eBOSS TS box too, so the DR3-DEEP2 sample cut to 0.2 mag padding tells us that.
 
 We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
 \begin{itemize}
