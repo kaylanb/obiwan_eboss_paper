@@ -186,8 +186,13 @@
 \newcommand{\fwhmo}{\text{FWHM}_0}
 \newcommand{\mdepth}{m_{\rm{depth}}}
 
-\newcommand{\tractor}{{\tt Tractor}~}
-\newcommand{\obiwan}{{\tt obiwan}~}
+\newcommand{\gb}{$g$}
+\newcommand{\rband}{$r$}
+\newcommand{\zb}{$z$}
+
+\newcommand{\tractor}{{\tt Tractor}}
+\newcommand{\legacypipe}{{\tt Legacypipe}}
+\newcommand{\obiwan}{{\tt Obiwan}}
 \newcommand{\sextractor}{{\tt Source Extractor}~}
 \newcommand{\psfex}{{\tt PSFex}}
 \newcommand{\sersic}{Sersic}
@@ -216,7 +221,8 @@ Hui Kong,$^{5}$
 John Moustakas,$^{6}$ 
 \newauthor
 Anand Raichoor,$^{7,8}$
-\& Ashley Ross$^{5}$
+Ashley Ross$^{5}$
+\& David Schlegel$^{2}$
 %Peter E. Nugent$^{1,2}$
 %\newauthor
 %Anna Patej, John Moustakas,$^{5}$, David J. Schlegel$^{2}$, Eddie F. Schlafly$^{2}$, 
@@ -252,9 +258,10 @@ $^{8}$CEA, Centre de Saclay, IRFU/SPP, F-91191 Gif-sur-Yvette, France \\
 % Abstract of the paper
 \begin{abstract}
 \begin{itemize}
-\item first application of obiwan (Burleigh \& Moustakas 2018, in prep) to galaxy survey data
-\item will show the impact of obiwan on the angular correlation function
-\item see intro
+\item We present the first application of \obiwan, a new method for removing imaging systematics from the DECaLS data (Burleigh \& Moustakas 2018, in prep), to remove these systematics from angular correlation functions.
+\item Our goal is to measure the angular correlation function for eBOSS ELGs. This is a crucial test of how well \obiwan\, can improve BAO measurements. The DESI analysis will be more complicated than eBOSS, so this is a necessary step towards a proper scientific analysis for DESI.
+\item We perform a trial run on X deg$^2$ of the DR5 footprint, and then run \obiwan\, on the actual eBOSS footprint.
+\item We estimate the impact of \obiwan\, on the angular correlation function
 \end{itemize}
 \end{abstract}
 
@@ -273,54 +280,48 @@ The imaging imaging systematics in SDSS turned out to be fairly independent of o
 
 We want the measure the Baryonic Acoustic Oscillation (BAO) signal, but there are shortcomings in the current methods, such as having apriori knowledge of all the possible imaging systematics in the galaxy survey dataset. DESI will obtain spectra of about 30M galaxies that will be targeted based on multi-band imaging from three telescopes. eBOSS has already targeted and obtained spectra for about \# ELG galaxies, based on DECam data. People have already started confronting this issue, and the previous weight fitting was extended to multiple dimensions (features). Poole et al fit to 25 maps simultaneously.
 
-This paper is the first analysis of large scale data, in this case for eBOSS and DESI, that uses {\it{obiwan}} (Burleigh \& Moustakas 2018, in prep), which is a non-parametric method that corrects for the full covariance of imaging systematics.
+This paper is the first analysis of large scale data, in this case for eBOSS and DESI, that uses \obiwan\, (Burleigh \& Moustakas 2018, in prep), which is a non-parametric method that corrects for the full covariance of imaging systematics. We perform a trial run on X deg$^2$ of the DR5 footprint, and then run \obiwan\, on the actual eBOSS footprint, restricting to the footprint described in CITE ANANDS PAPER. From these runs, we measure the impact of \obiwan\, on the primary science objectives of eBOSS and extrapolate to DESI. All data products are available at NERSC (see Section \ref{sec:data-products}).
 
-We will measure the impact of our method on the primary science objectives of eBOSS and DESI, for their respective ELG samples, by computing two-point correlations functions with and without the {\tt{obiwan}} corrections applied. 
+\section{Methods}
 
-\section{Two Point Correlation Function}
-The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
+\subsection{\obiwan}
 
-Computing the correlation function reduces to counting all pairs of galaxies with separation falling within a given bin. \cite{landy93} showed that 
+The five images in Fig. \ref{fig:1000-words} show how Obiwan works. The process is identical to how the Legacy Survey Team produces their Public Data Releases, with one exception. Every time Legacypipe reads an image, we add sim- ulated sources to it. The pipeline doesn't know about the simulated sources so the source detection and model fitting procedure is unaltered. For more details see Burleigh \& Moustakas 2018, in prep. Fig. \ref{fig:examples-faint} show examples of real and simulated ELG-like galaxies with similar \gb \, magnitude that are near the DECaLS detection limit. 
+%The ELGs are at our detection limits so visual inspection of single exposure images containing ELGs is challenging.
 
-\begin{align}
-\xi(\Delta s) = \frac{GG(\Delta s) - 2 GR (\Delta s) + RR (\Delta s)}{RR (\Delta s)} \label{eqn:lz93}
-\end{align}
+\begin{figure}
+ \includegraphics[width=\columnwidth]{obiwan_1000_words}
+ \caption{Example of \obiwan\, adding 4 simulated galaxies to a \gb, \rband, and \zb\, DECam image (200x200 pixels). The original image (top left) is modified by adding 4 simulated galaxies (top middle) to create the new image (top right), which {\tt{Tractor}} operates on. The model and residual images are the bottom panels. Two of the simulated galaxies (the more compact ones) have \dev profiles, while the other two have exponential profiles.}
+ \label{fig:1000-words}
+\end{figure}
 
-\noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
-
-The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
-
-We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
-
-To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
+\begin{figure}
+ \includegraphics[width=\columnwidth]{fake_real_mosaic_istart_254}
+ \caption{Real and simulated ELG-like galaxies near the DECaLS \gb \, detection limit, with similar \gb\, magnitude. The label for each image is on the left (R for real and F for fake or simulated) and its corresponding g-band magnitude is the number on the right. Each row is a single galaxy. The first column is a three color jpeg for easy visualization. The remaining columns are the per-band full resolution coadds for the \gb, \rband, \zb\, images and associated inverse variance maps. Consecutive rows of R and F (rows 1 and 2, 3 and 4, etc.) have similar g-band magnitude for a fair comparison.}
+ \label{fig:examples-faint}
+\end{figure} 
 
 \subsection{Randoms}
 
-We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
+We add fake galaxies to the images at random locations, run \legacypipe, and repeat until there are many more simulated galaxies than real ones. The simulated galaxies that \legacypipe\, detects and models are the ``randoms" that a correlation function estimator would use. These randoms have been modified by the full covariance between all imaging systematics, those we expect such as stellar density and seeing, those previously unknown, and the biases and systematics inherit to the \legacypipe\, pipeline itself. 
 
-To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}.
+Our simulated galaxies must be a representative sample of real ELGs or else we cannot use them as randoms. The next section describes how we generate a representative sample by comparing \tractor\, catalogues from DR5 to  spectroscopically confirmed ELG galaxies from DEEP2.  
 
-\subsection{Obiwan Randoms: DR5 data}
-\label{sec:dr5}
+\subsection{DEEP2}
 
-[INSERT HUI's WORK]
-
-\subsection{Obiwan Randoms: eBOSS data}
-\label{sec:eboss}
-
-\section{Simulated Galaxy Samples}
-
-\subsection{Truth: DEEP2 ELGs}
-
-In this paper, we only concern ourselves with Emission Line Galaxies (ELGs). These are blue star forming galaxies that are spectroscopically identified by a strong OII emission line. The DEEP2 Galaxy Redshift Survey (DEEP2, references) collected one of the largest samples of ELG spectra to date, since the spectral resolution resolves the OII emission line. To model the real population of ELGs, we match our DR3 Tractor catalogues to the DEEP2 catalogues using a 1\arcsec matching radius. 
-
-\subsection{The Simulated Galaxy Sample}
+In this paper, we only concern ourselves with Emission Line Galaxies (ELGs). These are blue star forming galaxies that are spectroscopically identified by a strong OII emission line. The DEEP2 Galaxy Redshift Survey (DEEP2, references) collected one of the largest samples of ELG spectra to date, since the spectral resolution resolves the OII emission line. To model the real population of ELGs, we match our DR3 Tractor catalogues to the DEEP2 catalogues using a 1\arcsec matching radius.
 
 This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra), brightness (g, r, z flux), and shape (half light radii, ellipticity) information. While the sample is biased by the DEEP2 selection function, the depth of DR5 imaging, and Tractor’s ability to measure the centroid, brightness, and shape, this is as good as we can do with publicly available data. The best possible sample is probably to use Hyper Suprime-Cam Subaru Survey (HSC-SS) imaging in the DEEP2 fields (Hayashi et al. 2017, Mehta et al. 2017).
 
-We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. \dev comprise less than 3\% of the DESI sample, and do not model them because the sample size is too small to capture the underlying distributions in redshift and brightness. However, \dev are 9\% of the eBOSS sample and they fill in parameter space enough for use to model. See Section A. 2.1 for the target selection criteria and Tractor catalogue cuts we use to construct our DESI and eBOSS samples.
+We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. 
 
-For DESI, we apply the following cuts,
+\section{X deg$^2$ of DR5}
+
+We inject simulated galaxies into X deg$^2$ of DR5 imaging at density of X galaxies / deg$^2$. About X\% of the simulated galaxies are DESI ELGs, so this is X times larger than DESI target density. 
+
+\subsection{Simulated Galaxy Sample}
+
+\dev comprise less than 3\% of the DESI sample, and do not model them because the sample size is too small to capture the underlying distributions in redshift and brightness. For DESI, we apply the following cuts,
 
 {\it{ALL}}
 \begin{itemize}
@@ -339,9 +340,31 @@ For DESI, we apply the following cuts,
 \item draw N points, drop points with LogicalOr (0.8 < redshift > 1.4, more than 0.5 deeper than g, r, z limits, and rhalf > pixscale/2), redraw as many points as dropped, repeat until have N points
 \end{itemize}
 
-For eBOSS, we find that the redshift, brightness, and shape distributions of eBOSS SGC targets with eBOSS spectra is reproduced by the DR3-DEEP2 catalogue cut to the eBOSS ELG TS box.
-We use the SGC data, because it is deeper than NGC and complete to about g =  22.8 (NGC complete to about g = 22.3). SGC is also 70\% of the data set, so we drop the NGC data.
-We are interested in redshift, brightness, and shape outside of the eBOSS TS box too, so the DR3-DEEP2 sample cut to 0.2 mag padding tells us that.
+\subsection{Brightness and shape with the appropriate n(z)}
+
+We model the DESI n(z) for ELGs by over-fitting a GMM model to the desired n(z) for DESI. We randomly sampled 100,000 points from the Sanchez \& Kirkby ELG mocks, then fit a 12 component GMM to the resulting n(z) since this reproduced the n(z) very well.
+
+The procedure for generating the sample of ELGs with representative properties for DESI is as follows. We have GMM models for n(z) and the joint distribution of redshift, brightness, and shape. Draw N samples from the n(z) model. Draw 10k samples from the redshift, brigthness, shape model, filtering out points outside the redshift or detection limits. Organize the 10k samples in a KD Tree. For each of the N samples, find the nearest redshift in the 10k sample, and assign the corresponding brightness and shape. This becomes the sample we inject into the imaging data. It has the exact n(z) for DESI or eBOSS and reasonable brightnesses and shapes for each redshift. 42\% of the DESI sample is in the DESI TS box. Note, we repeated the above procedure using DR2 and DR3, respectively, instead of DR5 and ended up with similar Gaussian Mixture Models.
+
+\section{eBOSS NGC and SGC}
+
+We inject simulated galaxies into all DECaLS imaging (DR3 and ``DR3-plus") used to select ELG targets by CITE ANAND PAPER. We inject the galaxies at a density of X galaxies / deg$^2$. About X\% of the simulated galaxies are eBOSS ELGs, so this is X times larger than eBOSS target density. 
+
+\begin{figure}
+     \subfloat[NGC\label{fig:ccds-ngc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:ccds-sgc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_sgc}
+     }
+\caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs from the \tractor\, catalogues that CITE ANAND PAPER used to select ELG targets.}
+\label{fig:ccds-eboss}
+\end{figure}
+
+\subsection{Simulated Galaxy Sample}
+
+\dev are 9\% of the eBOSS sample and they fill in parameter space enough for use to model. For eBOSS, we find that the redshift, brightness, and shape distributions of eBOSS SGC targets with eBOSS spectra is reproduced by the DR3-DEEP2 catalogue cut to the eBOSS ELG TS box. We use the SGC data, because it is deeper than NGC and complete to about g =  22.8 (NGC complete to about g = 22.3). SGC is also 70\% of the data set, so we drop the NGC data. We are interested in redshift, brightness, and shape outside of the eBOSS TS box too, so the DR3-DEEP2 sample cut to 0.2 mag padding tells us that.
 
 We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
 \begin{itemize}
@@ -353,46 +376,97 @@ We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
 
 However, we cannot use a GMM because g-mag is a power law, so just applying the above cuts, we save 4 samples to files: DR3DP2 EXP (1064 poitns), DR3DP2 DEV (85 points), SGC EXP (77k points), and SGC DEV (7k points).
 
-\subsection{n(z)}
+\subsection{Brightness and shape with the appropriate n(z)}
 
-We model the DESI and eBOSS n(z) for ELGs by over-fitting a GMM model to the desired n(z) for DESI and actual n(z) measured from spectra for eBOSS.
+We model the eBOSS n(z) for ELGs by over-fitting a GMM model to the actual n(z) measured from eBOSS spectra. We compute the actual n(z) by dropping NGC data (its incomplete) and weighting by spectroscopic completeness (e.g. 1/TSR in the eBOSS catalogues). A 10 component GMM reproduces the n(z) well. 
 
-For DESI, we randomly sampled 100,000 points from the Sanchez \& Kirkby ELG mocks, then fit a 12 component GMM to the resulting n(z) since this reproduced the n(z) very well.
+The procedure for generating the sample of ELGs with representative properties for eBOSS is as follows. We draw N samples from the n(z) model, drop those outside the 0 <= redshift <= 2 limits, redraw the number dropped, and repeat until there are N samples. Next, combine the DR3DP2 ELG and DR3DP2 DEV samples and organize in a KD Tree. For each of the N points, find the nearest redshift in the KD Tree, and ask whether the corresponding brightness in in the TS box or not (this is equivalent to a coin flip with p = fraction of the DR3DP2 ELG and DR3DP2 DEV sample that is the in the TS box). If in the box, find the nearest redshift in the SGC/eBOSS sample and assign the associated brightness and shape. 90\% of the time use the EXP SGC/eBOSS sample and 10\% the DEV SGC/eBOSS sample. If not in the box, find the nearest redshift in the DR3-DEEP2 sample (90\% of the time the EXP one, 10\% the DEV one). Note, the eBOSS sample that comes from inside the TS box has the SDSS-ID of the spectrum that it’s redshift came from. 
 
-For eBOSS, we compute the actual n(z) by dropping NGC data (its incomplete) and weighting by spectroscopic completeness (e.g. 1/TSR in the eBOSS catalogues). A 10 component GMM reproduces the n(z) well. 
+\subsection{Exploratory Data Analysis}
 
-\subsection{Combining n(z) with redshift, brightness, and shape}
+\begin{figure}
+ \includegraphics[width=\columnwidth]{grz_hist}
+ \caption{}
+ \label{fig:grz-hist.png}
+\end{figure}
 
-We present the procedure for generating the sample of ELG properties that we will use in our Monte Carlo simulations. 
+\begin{figure}
+ \includegraphics[width=\columnwidth]{e1_e2_input}
+ \caption{}
+ \label{fig:e1-e2}
+\end{figure}
 
-For DESI, we have GMM models for n(z) and the joint distribution of redshift, brightness, and shape. Draw N samples from the n(z) model. Draw 10k samples from the redshift, brigthness, shape model, filtering out points outside the redshift or detection limits. Organize the 10k samples in a KD Tree. For each of the N samples, find the nearest redshift in the 10k sample, and assign the corresponding brightness and shape. This becomes the sample we inject into the imaging data. It has the exact n(z) for DESI or eBOSS and reasonable brightnesses and shapes for each redshift. 42\% of the DESI sample is in the DESI TS box.
+\begin{figure}
+ \includegraphics[width=\columnwidth]{delta_dec_vs_delta_ra}
+ \caption{}
+ \label{fig:delta-radec}
+\end{figure}
 
-For eBOSS, we draw N samples from the n(z) model, drop those outside the 0 <= redshift <= 2 limits, redraw the number dropped, and repeat until there are N samples. Next, combine the DR3DP2 ELG and DR3DP2 DEV samples and organize in a KD Tree. For each of the N points, find the nearest redshift in the KD Tree, and ask whether the corresponding brightness in in the TS box or not (this is equivalent to a coin flip with p = fraction of the DR3DP2 ELG and DR3DP2 DEV sample that is the in the TS box). If in the box, find the nearest redshift in the SGC/eBOSS sample and assign the associated brightness and shape. 90\% of the time use the EXP SGC/eBOSS sample and 10\% the DEV SGC/eBOSS sample. If not in the box, find the nearest redshift in the DR3-DEEP2 sample (90\% of the time the EXP one, 10\% the DEV one). 
+\begin{figure}
+ \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
+ \caption{}
+ \label{fig:number-per-type-eboss-ngc}
+\end{figure}
 
-Note, the eBOSS sample that comes from inside the TS box has the SDSS-ID of the spectrum that it’s redshift came from. We also repeated the above procedure using DR2 and DR3, respectively, instead of DR5 and ended up with similar Gaussian Mixture Models.
+\begin{figure}
+ \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
+ \caption{}
+ \label{fig:confusion-matrix-eboss-ngc}
+\end{figure}
 
-\section{Production Runs}
+\begin{figure}
+     \subfloat[NGC\label{fig:number-density-eboss-ngc}]{
+       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:number-density-eboss-sgc}]{
+       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_sgc}
+     }
+\caption{Number density of simulated galaxies in the NGC and SGC footprints.}
+\label{fig:number-density-eboss}
+\end{figure}
 
-This section presents the eBOSS and DR5 production runs. All data products are available at NERSC. See Section Appendix 2 for how to obtain the data.
-
-\subsection{What to the Simulated ELGs look like?}
-
-The ELGs are at our detection limits so visual inspection of single exposure images containing ELGs is challenging. Figure \# shows three color loads of ELGs of different depths having g, r, and z imaging.
-
-INSERT Figure showing examples of cutouts like deep learning page.
-
-\subsection{DR5 10\%}
-
-A rerun of about 10\% (500 deg2) of DR5 injecting fake ELGs at 4x DESI target density. This is the proof of concept run, which will be the first of many future simulated Data Releases. The data model will be defined, etc.
-The fake sample is generated using  the GMMs for DESI n(z) and redshift, brightness, and shape discussed in Section \#.
-
-\subsection{eBOSS}
-
-A rerun of the bricks used by eBOSS (a.k.a. DR3 $+$ dr3plus) for their first round of ELG target selection. This is about \#\% (1200 deg2) of DR3 and given that eBOSS spectra are on disk, is a crucial test of how well obiwan can improve BAO measurements. The DESI analysis will be more complicated than eBOSS, so this is a proof of concept run of DESI Science.
+\begin{figure}
+     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
+     }
+\caption{Fraction of injected galaxies recovered by \legacypipe\, (i.e. detected and modeled) in the NGC and SGC footprints.}
+\label{fig:frac-recovered-eboss}
+\end{figure}
 
 
-\section{Results}
+\section{Two Point Correlation Function}
+The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
 
+Computing the correlation function reduces to counting all pairs of galaxies with separation falling within a given bin. \cite{landy93} showed that 
+
+\begin{align}
+\xi(\Delta s) = \frac{GG(\Delta s) - 2 GR (\Delta s) + RR (\Delta s)}{RR (\Delta s)} \label{eqn:lz93}
+\end{align}
+
+\noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
+
+The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
+
+We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
+
+To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
+
+\subsection{DR5 Analysis}
+\label{sec:dr5}
+
+INSERT HUI's WORK
+
+\subsection{eBOSS NGC and SGC Analysis}
+\label{sec:eboss}
+
+INSERT HUI's WORK
+
+\section{Plots to Make}
 \begin{itemize}
 \item galdepth vs. obi wan measured depth, where does the 20\% from validation fall?
 \item n(z) resulting from different depths
@@ -436,12 +510,10 @@ A rerun of the bricks used by eBOSS (a.k.a. DR3 $+$ dr3plus) for their first rou
 
 \appendix
 
-\section{Data Products @ NERSC}
+\section{Data Products}
+\label{sec:data-products}
 
-\begin{itemize}
-\item labeled by which Run it is as above
-\item same data model as the DRs (give link), however the obi wan directory will contain uniform randoms, obiwan randoms, DR3+dr3plus tractor cats after eBOSS ELG TS, DR5 tractor cats after DESI ELG TS
-\end{itemize}
+TRANSFER DATA TO eBOSS PROJECT DISK SPACE SAY HOW PEOPLE CAN ACCESS IT
 
 \section{Target Selection and Tractor Catalogue Cuts for ELGs}
 
