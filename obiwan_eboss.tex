@@ -277,12 +277,11 @@ methods: observational
 
 \section{Introduction}
 
-\cite{anand17}
 The imaging imaging systematics in SDSS turned out to be fairly independent of one another, so they could be removed with linear models for them (ashley's papers). However, the imaging systematics in the next generation of galaxy surveys (astronomy data sets) will be highly correlated. The data will come from a joint analysis of multiple telescopes' data and/or will have data of the same part of the sky collected over long timelines (months or years).
 
 We want the measure the Baryonic Acoustic Oscillation (BAO) signal, but there are shortcomings in the current methods, such as having apriori knowledge of all the possible imaging systematics in the galaxy survey dataset. DESI will obtain spectra of about 30M galaxies that will be targeted based on multi-band imaging from three telescopes. eBOSS has already targeted and obtained spectra for about \# ELG galaxies, based on DECam data. People have already started confronting this issue, and the previous weight fitting was extended to multiple dimensions (features). Poole et al fit to 25 maps simultaneously.
 
-This paper is the first analysis of large scale data, in this case for eBOSS and DESI, that uses \obiwan\, (Burleigh \& Moustakas 2018, in prep), which is a non-parametric method that corrects for the full covariance of imaging systematics. We perform a trial run on X deg$^2$ of the DR5 footprint, and then run \obiwan\, on the actual eBOSS footprint, restricting to the footprint described in CITE ANANDS PAPER. From these runs, we measure the impact of \obiwan\, on the primary science objectives of eBOSS and extrapolate to DESI. All data products are available at NERSC (see Section \ref{sec:data-products}).
+This paper is the first analysis of large scale data, in this case for eBOSS and DESI, that uses \obiwan\, (Burleigh \& Moustakas 2018, in prep), which is a non-parametric method that corrects for the full covariance of imaging systematics. We perform a trial run on X deg$^2$ of the DR5 footprint, and then run \obiwan\, on the actual eBOSS footprint, restricting to the footprint described in \cite{anand17}. From these runs, we measure the impact of \obiwan\, on the primary science objectives of eBOSS and extrapolate to DESI. All data products are available at NERSC (see Section \ref{sec:data-products}).
 
 \section{Methods}
 
@@ -299,7 +298,7 @@ The five images in Fig. \ref{fig:1000-words} show how Obiwan works. The process 
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{fake_real_mosaic_istart_254}
- \caption{Real and simulated ELG-like galaxies near the DECaLS \gb \, detection limit, with similar \gb\, magnitude. The label for each image is on the left (R for real and F for fake or simulated) and its corresponding g-band magnitude is the number on the right. Each row is a single galaxy. The first column is a three color jpeg for easy visualization. The remaining columns are the per-band full resolution coadds for the \gb, \rband, \zb\, images and associated inverse variance maps. Consecutive rows of R and F (rows 1 and 2, 3 and 4, etc.) have similar g-band magnitude for a fair comparison.}
+ \caption{Real and simulated ELG-like galaxies near the DECaLS \gb \, detection limit, with similar \gb\, magnitude. The label for each image is on the left (R for real and F for fake or simulated) and its corresponding g-band magnitude is the number on the right. Each row is a single galaxy. The first column is a three color jpeg for easy visualization. The remaining columns are the per-band full resolution coadds for the \gb, \rband, \zb\, images and associated inverse variance maps. Consecutive rows of R and F (rows 1 and 2, 3 and 4, etc.) have similar g-band magnitude for a fair comparison. REPLACE WITH GALAXIES AT eBOSS G=22.9 LIMIT}
  \label{fig:examples-faint}
 \end{figure} 
 
@@ -352,7 +351,7 @@ The procedure for generating the sample of ELGs with representative properties f
 
 \section{eBOSS NGC and SGC}
 
-We inject simulated galaxies into all DECaLS imaging (DR3 and ``DR3-plus") used to select ELG targets by CITE ANAND PAPER. We inject the galaxies at a density of X galaxies / deg$^2$. About X\% of the simulated galaxies are eBOSS ELGs, so this is X times larger than eBOSS target density. 
+We inject simulated galaxies into all DECaLS imaging (DR3 and ``DR3-plus") used to select ELG targets by \cite{anand17}. We inject the galaxies at a density of X galaxies / deg$^2$. About X\% of the simulated galaxies are eBOSS ELGs, so this is X times larger than eBOSS target density. 
 
 \begin{figure}
      \subfloat[NGC\label{fig:ccds-ngc}]{%
@@ -366,7 +365,7 @@ We inject simulated galaxies into all DECaLS imaging (DR3 and ``DR3-plus") used 
 \label{fig:ccds-eboss}
 \end{figure}
 
-\subsection{Brightness, shape, and redshift for eBOSS ELGs}
+\subsection{ELGs Selected By eBOSS}
 \label{sec:eboss-targets}
 
 We use the joint tables (provided by Anand) of \tractor \, catalogue measurements for each eBOSS ELG target and the eBOSS spectra obtained for that target,
@@ -397,26 +396,28 @@ DEV galaxies are systematically larger and about 1 mag brighter than EXP in all 
  \label{fig:ngc-incomplete}
 \end{figure}
 
-Because the SGC \gb \, mag PDF in Fig \ref{fig:ngc-incomplete} is a step function for $g > 22.825$, a Gaussian Mixture model for the brightness, shape, and redshift distribution of eBOSS ELGs will be inaccurate at the faint \gb \, mag, where most of the ELGs reside. We bootstrap sample from our 78,000 EXP and 7,500 DEV samples instead.
+Because the SGC \gb \, mag PDF in Fig \ref{fig:ngc-incomplete} is a step function for $g > 22.825$, a Gaussian Mixture model for the brightness, shape, and redshift distribution of eBOSS ELGs will be inaccurate at the faint \gb \, mag, where most of the ELGs reside. To model the full distribution of ELG properties we bootstrap sample from our 78,000 EXP and 7,500 DEV samples.
 
-\subsection{Brightness, shape, and redshift for ELGs outside the eBOSS Target Selection Box}
+\subsection{ELGs Almost Selected By eBOSS}
 \label{sec:eboss-almost-targets}
 
-We want to inject ELGs with \obiwan\, that are inside and outside of the eBOSS ELG target selection box; however, the EXP and DEV samples from Section \ref{sec:eboss-targets} do not go outside the target selection box. We find that the a DR3-DEEP2 catalogue, using 1\arcsec matching, reproduces the brightness, shape, and redshift distribution of the EXP and DEV samples from Section \ref{sec:eboss-targets}, when the eBOSS target selection is applied. Fig. \ref{fig:dr3dp2-reproduces} shows that the \gb, \rband, \zb, redshift, and $\rhalf$ histograms, for the DR3-DEEP2 catalogue and the EXP sample from Section \ref{sec:eboss-targets}, agree very well for EXP galaxies in the SGC. Fig. \ref{fig:dr3dp2-redshift} shows that the \gb, \rband, \zb, and $\rhalf$ dependence on redshift is also very similar for the EXP galaxies in the SGC. DEV galaxies in the SGC show similar agreement.
+In addition to simulating eBOSS ELGs, we want to inject ELG-like galaxies outside the eBOSS selection boundaries to test contamination; however, the EXP and DEV samples from Section \ref{sec:eboss-targets} do not go outside the eBOSS ELG selection boundaries. We find that the a DR3-DEEP2 catalogue, using 1\arcsec matching, reproduces the brightness, shape, and redshift distribution of the EXP and DEV samples from Section \ref{sec:eboss-targets}. Fig. \ref{fig:dr3dp2-reproduces} shows that the PDFs of \gb, \rband, \zb, redshift, and $\rhalf$ for the EXP sample from Section \ref{sec:eboss-targets} and the DR3-DEEP2 catalogue, cut to EXP sources, the SGC, and eBOSS ELG targets, agree very well. Fig. \ref{fig:dr3dp2-redshift} shows that the \gb, \rband, \zb, and $\rhalf$ dependence on redshift is also very similar for both samples. A similar level of agreement occurs for DEV galaxies.
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dr3dp2_reproduces}
- \caption{}
+ \caption{PDFs of \gb, \rband, \zb mag (top) and redshift and $\rhalf$ (bottom) for EXP galaxies that are eBOSS ELG targets in the DR3-DEEP2 (blue) and Section \ref{sec:eboss-targets} (red) samples. The DR3-DEEP2 sample reproduces the brightness, shape, and redshift distributions from Section \ref{sec:eboss-targets}.}
  \label{fig:dr3dp2-reproduces}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dr3dp2_redshift_trends}
- \caption{}
+ \caption{Redshift dependence of \gb, \rband, \zb, and $\rhalf$. The DR3-DEEP2 (red) and Section \ref{sec:eboss-targets} (blue) samples agree very well. SWAP COLORS SO BLUE IS DR3-DP2 LIKE PREV FIG}
  \label{fig:dr3dp2-redshift}
 \end{figure}
 
-The DR3-DEEP2 catalogue contains galaxies outside the eBOSS target selection box. Figs. \ref{fig:dr3dp2-reproduces} and \ref{fig:dr3dp2-redshift} show that these galaxies are representative of eBOSS ELGs, so this gives us a sample of ELG-like galaxies outside of the eBOSS target selection box. We keep DR3-DEEP2 catalogue SGC galaxies within 0.2 mag of the eBOSSS target selection, and end up with 1,000 EXP and 100 DEV galaxies. This is a small sample, but better than nothing.  
+The DR3-DEEP2 catalogue contains galaxies outside the eBOSS target selection boundaries. Because these galaxies are representative of eBOSS ELGs (Figs. \ref{fig:dr3dp2-reproduces} and \ref{fig:dr3dp2-redshift}), we can sample the properties of ELG-like galaxies outside the eBOSS target selection boundaries. We keep DR3-DEEP2 catalogue SGC galaxies within 0.2 mag of the eBOSSS target selection boundaries. This yields a small sample if 1,000 EXP and 100 DEV, but it is better than nothing. 
+
+
 
 We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
 \begin{itemize}
@@ -430,11 +431,18 @@ We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
 
 Sections \ref{sec:eboss-targets} and \ref{sec:eboss-almost-targets} collected four eBOSS ELG-like samples: DR3DP2 EXP (1064 poitns), DR3DP2 DEV (85 points), SGC EXP (77k points), and SGC DEV (7k points). Fig. \ref{fig:dr3dp2-vs-eboss} shows how the EXP samples compare. There are many more data points in the SGC EXP sample, but the DR3DP2 EXP sample extends to fainter and brighter \gb, \rband, and \zb \, mag ELG-like galaxies.
 
+Fig. \ref{fig:dr3dp2-vs-eboss} compares to the eBOSS and DR3-DEEP2 samples of EXP and DEV galaxies, respectively.  
 
 \begin{figure}
- \includegraphics[width=\columnwidth]{dr3dp2_vs_eboss_sample}
- \caption{}
- \label{fig:dr3dp2-vs-eboss}
+     \subfloat[type EXP\label{fig:dr3dp2-vs-eboss-exp}]{%
+       \includegraphics[width=\columnwidth]{dr3dp2_vs_eboss_exp}
+     }
+     \hfill
+     \subfloat[type DEV\label{fig:dr3dp2-vs-eboss-dev}]{%
+       \includegraphics[width=\columnwidth]{dr3dp2_vs_eboss_dev}
+     }
+\caption{PDFs of \gb, \rband, \zb mag, redshift, and $\rhalf$ for galaxies from the Section \ref{sec:eboss-targets} (red) and DR3-DEEP2 (blue) samples. (Top) EXP galaxies. (Bottom) DEV galaxies. The DR3-DEEP2 sample includes galaxies within 0.2 mag of the eBOSS ELG target selection boundaries, so it is brighter and fainter than the Section \ref{sec:eboss-targets} sample. The blue DEV PDFs are noisy because the DEV DR3-DEEP2 sample is so small (100 galaxies).}
+\label{fig:dr3dp2-vs-eboss}
 \end{figure}
 
 
