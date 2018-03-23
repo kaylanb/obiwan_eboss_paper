@@ -381,7 +381,7 @@ We use the joint tables (provided by Anand) of \tractor \, catalogue measurement
 \begin{itemize}
 \item \verb|z_flag == 1 & brick_primary & |$\rhalf < 10$\arcsec.
 \end{itemize}
-DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the above sample into separate DEV and EXP samples. Fig. \ref{fig:ngc-incomplete} also shows that the NGC region is not complete for the \gb \,mag of the eBOSS ELGs, so we throw out all the NGC galaxies (about 30\% of the sample). This yields 7,500 DEV and 78,000 EXP galaxies.  
+DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the above sample into separate DEV and EXP samples. Fig. \ref{fig:ngc-incomplete} also shows that the NGC region is not complete for the \gb \,mag of the eBOSS ELGs, so we throw out all the NGC galaxies (about 30\% of the sample). This yields 77,525 EXP and 7,439 DEV galaxies. We refer to these as our eBOSS sample.
 %9\% of the original sample is DEV, but they fill in parameter space enough for use to model. 
 
 \begin{figure}
@@ -396,40 +396,32 @@ DEV galaxies are systematically larger and about 1 mag brighter than EXP in all 
  \label{fig:ngc-incomplete}
 \end{figure}
 
-Because the SGC \gb \, mag PDF in Fig \ref{fig:ngc-incomplete} is a step function for $g > 22.825$, a Gaussian Mixture model for the brightness, shape, and redshift distribution of eBOSS ELGs will be inaccurate at the faint \gb \, mag, where most of the ELGs reside. To model the full distribution of ELG properties we bootstrap sample from our 78,000 EXP and 7,500 DEV samples.
+Because the SGC \gb \, mag PDF in Fig \ref{fig:ngc-incomplete} is a step function for $g > 22.825$, a Gaussian Mixture model for the brightness, shape, and redshift distribution of eBOSS ELGs will be inaccurate at the faint \gb \, mag, where most of the ELGs reside. To model the full distribution of ELG properties we bootstrap sample from our eBOSS sample.
 
 \subsection{ELGs Almost Selected By eBOSS}
 \label{sec:eboss-almost-targets}
 
-In addition to simulating eBOSS ELGs, we want to inject ELG-like galaxies outside the eBOSS selection boundaries to test contamination; however, the EXP and DEV samples from Section \ref{sec:eboss-targets} do not go outside the eBOSS ELG selection boundaries. We find that the a DR3-DEEP2 catalogue, using 1\arcsec matching, reproduces the brightness, shape, and redshift distribution of the EXP and DEV samples from Section \ref{sec:eboss-targets}. Fig. \ref{fig:dr3dp2-reproduces} shows that the PDFs of \gb, \rband, \zb, redshift, and $\rhalf$ for the EXP sample from Section \ref{sec:eboss-targets} and the DR3-DEEP2 catalogue, cut to EXP sources, the SGC, and eBOSS ELG targets, agree very well. Fig. \ref{fig:dr3dp2-redshift} shows that the \gb, \rband, \zb, and $\rhalf$ dependence on redshift is also very similar for both samples. A similar level of agreement occurs for DEV galaxies.
+In addition to simulating eBOSS ELGs, we want to test contamination by injecting ELGs just outside of the eBOSS selection boundaries; however, the eBOSS sample does not extend beyond the selection boundaries. We find that the a DR3-DEEP2 catalogue, using 1\arcsec matching, reproduces the brightness, shape, and redshift distributions of the eBOSS sample. Fig. \ref{fig:dr3dp2-reproduces} shows the PDFs of \gb, \rband, \zb, redshift, and $\rhalf$ for EXP galaxies, and that the DR3-DEEP2 galaxies (cut to type EXP galaxies, the SGC footprint, and eBOSS ELG targets) agree very well with the eBOSS sample. Fig. \ref{fig:dr3dp2-redshift} shows that for EXP galaxies, \gb, \rband, \zb, and $\rhalf$ depend on redshift in the same way for the DR3-DEEP2 galaxies and the eBOSS sample. A similar level of agreement occurs for DEV galaxies.
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dr3dp2_reproduces}
- \caption{PDFs of \gb, \rband, \zb mag (top) and redshift and $\rhalf$ (bottom) for EXP galaxies that are eBOSS ELG targets in the DR3-DEEP2 (blue) and Section \ref{sec:eboss-targets} (red) samples. The DR3-DEEP2 sample reproduces the brightness, shape, and redshift distributions from Section \ref{sec:eboss-targets}.}
+ \caption{PDFs of \gb, \rband, \zb, redshift, and $\rhalf$ for EXP galaxies. The DR3-DEEP2 galaxies (blue), cut to type EXP galaxies, the SGC footprint, and eBOSS ELG targets, reproduces the brightness, shape, and redshift distributions of the eBOSS sample (red).}
  \label{fig:dr3dp2-reproduces}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dr3dp2_redshift_trends}
- \caption{Redshift dependence of \gb, \rband, \zb, and $\rhalf$. The DR3-DEEP2 (red) and Section \ref{sec:eboss-targets} (blue) samples agree very well. SWAP COLORS SO BLUE IS DR3-DP2 LIKE PREV FIG}
+ \caption{For EXP galaxies, \gb, \rband, \zb, and $\rhalf$ depend on redshift in the same way for the DR3-DEEP2 galaxies (red) and the eBOSS sample (blue). SWAP COLORS SO BLUE IS DR3-DP2 LIKE PREV FIG}
  \label{fig:dr3dp2-redshift}
 \end{figure}
 
-The DR3-DEEP2 catalogue contains galaxies outside the eBOSS target selection boundaries. Because these galaxies are representative of eBOSS ELGs (Figs. \ref{fig:dr3dp2-reproduces} and \ref{fig:dr3dp2-redshift}), we can sample the properties of ELG-like galaxies outside the eBOSS target selection boundaries. We keep DR3-DEEP2 catalogue SGC galaxies within 0.2 mag of the eBOSSS target selection boundaries. This yields a small sample if 1,000 EXP and 100 DEV, but it is better than nothing. 
+Because DR3-DEEP2 galaxies are representative of eBOSS ELGs and extend beyond the eBOSS selection boundaries, we can construct a sample of ELG-like galaxies to test contamination into the eBOSS selected sample. We choose to keep DR3-DEEP2 SGC galaxies within a padding of 0.2 mag of the eBOSSS selection boundaries, yielding a sample of 1,000 EXP and 100 DEV galaxies. Burleigh \& Moustakas 2018, in prep show that \tractor\, flux measurements are accurate to 0.1 - 0.2 mag for \gb $\sim 22.9$ galaxies, so a padding of 0.2 mag should capture most contaminants due to \tractor\, measurement errors. 
 
+\subsection{Simulating eBOSS ELGs with the correct n(z)}
 
+Given our four representative samples for eBOSS ELGs: the eBOSS sample (77,525 EXP and 7,439 DEV galaxies) and the DR3-DEEP2 sample (1,064 EXP and 85 DEV galaxies), we want to bootstrap sample them according to the eBOSS n(z). 
 
-We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
-\begin{itemize}
-\item 0 <= redshift <= 2 and rhalf > pixscale/2
-\item EXP: cut to rhalf < 2.5
-\item DEV: cut to rhalf < 5.0
-\item DR3-DEEP2 points: also cut to min(gmag in SGC sample) - 0.2 <= gmag in DR3Dp2 sample <= max(gmag in SGC sample) + 0.2
-\end{itemize}
-
-\subsection{Brightness and shape with the appropriate n(z)}
-
-Sections \ref{sec:eboss-targets} and \ref{sec:eboss-almost-targets} collected four eBOSS ELG-like samples: DR3DP2 EXP (1064 poitns), DR3DP2 DEV (85 points), SGC EXP (77k points), and SGC DEV (7k points). Fig. \ref{fig:dr3dp2-vs-eboss} shows how the EXP samples compare. There are many more data points in the SGC EXP sample, but the DR3DP2 EXP sample extends to fainter and brighter \gb, \rband, and \zb \, mag ELG-like galaxies.
+Fig. \ref{fig:dr3dp2-vs-eboss} shows how the EXP samples compare. There are many more data points in the SGC EXP sample, but the DR3DP2 EXP sample extends to fainter and brighter \gb, \rband, and \zb \, mag ELG-like galaxies.
 
 Fig. \ref{fig:dr3dp2-vs-eboss} compares to the eBOSS and DR3-DEEP2 samples of EXP and DEV galaxies, respectively.  
 
@@ -449,6 +441,14 @@ Fig. \ref{fig:dr3dp2-vs-eboss} compares to the eBOSS and DR3-DEEP2 samples of EX
 We model the eBOSS n(z) for ELGs by over-fitting a GMM model to the actual n(z) measured from eBOSS spectra. We compute the actual n(z) by dropping NGC data (its incomplete) and weighting by spectroscopic completeness (e.g. 1/TSR in the eBOSS catalogues). A 10 component GMM reproduces the n(z) well. 
 
 The procedure for generating the sample of ELGs with representative properties for eBOSS is as follows. We draw N samples from the n(z) model, drop those outside the 0 <= redshift <= 2 limits, redraw the number dropped, and repeat until there are N samples. Next, combine the DR3DP2 ELG and DR3DP2 DEV samples and organize in a KD Tree. For each of the N points, find the nearest redshift in the KD Tree, and ask whether the corresponding brightness in in the TS box or not (this is equivalent to a coin flip with p = fraction of the DR3DP2 ELG and DR3DP2 DEV sample that is the in the TS box). If in the box, find the nearest redshift in the SGC/eBOSS sample and assign the associated brightness and shape. 90\% of the time use the EXP SGC/eBOSS sample and 10\% the DEV SGC/eBOSS sample. If not in the box, find the nearest redshift in the DR3-DEEP2 sample (90\% of the time the EXP one, 10\% the DEV one). Note, the eBOSS sample that comes from inside the TS box has the SDSS-ID of the spectrum that itÕs redshift came from. 
+
+We apply the following cuts to the eBOSS SGC and DR3-DEEP2 samples,
+\begin{itemize}
+\item 0 <= redshift <= 2 and rhalf > pixscale/2
+\item EXP: cut to rhalf < 2.5
+\item DEV: cut to rhalf < 5.0
+\item DR3-DEEP2 points: also cut to min(gmag in SGC sample) - 0.2 <= gmag in DR3Dp2 sample <= max(gmag in SGC sample) + 0.2
+\end{itemize}
 
 \subsection{Exploratory Data Analysis}
 
