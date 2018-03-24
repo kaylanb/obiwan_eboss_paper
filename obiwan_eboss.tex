@@ -463,7 +463,7 @@ We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / 
 Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. The distribution of position angles (pa), minor to major axis ratios (ba), and corresponding ellipticity components (e2, e1) are shown in Fig. \ref{fig:e1-e2}. 
 
 \begin{figure}
- \includegraphics[width=5 cm]{grz_hist}
+ \includegraphics[width=5 cm]{grz_hist_input_ext}
  \caption{\gb, \rband, \zb\, magnitude (top to bottom) of simulated galaxies with (green) and without (blue) galactic extinction. Extincted sources are fainter and the effect is stronger for bluer bands.}
  \label{fig:grz-hist}
 \end{figure}
@@ -490,6 +490,13 @@ Which simulated galaxies does \legacypipe\, detect and model, and how are the \t
  \label{fig:confusion-matrix-eboss-ngc}
 \end{figure}
 
+\begin{figure}
+ \includegraphics[width=\columnwidth]{grz_hist_by_type2}
+ \caption{}
+ \label{fig:grz-hist-type}
+\end{figure}
+
+
 \obiwan\, injects sources at the nearest pixel center, so there is a systematic offset of 0.4\arcsec in the RA and Dec residuals between the true source centroid and \tractor's measurement of it (see Fig. \ref{fig:delta-radec}). The offset would be equal to the DECaLS pixel scale, 0.262\arcsec / pixel, but co-registry and simultaneous fitting of multiple images makes it larger.
 
 \begin{figure}
@@ -500,6 +507,18 @@ Which simulated galaxies does \legacypipe\, detect and model, and how are the \t
 
 \obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
 % We can also ask, what magnitude source in these images becomes a 5\sigma detection with \tractor? (this depends on tractor flux ivar so is not independent of tractor)
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
+ \caption{}
+ \label{fig:delta-radec}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=7 cm]{rec_lost_contam_grz}
+ \caption{}
+ \label{fig:delta-radec}
+\end{figure}
 
 \section{Two Point Correlation Function}
 The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
