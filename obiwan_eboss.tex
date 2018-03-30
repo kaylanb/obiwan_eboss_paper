@@ -528,15 +528,15 @@ Which simulated galaxies does \legacypipe\, detect and model, and how do the \tr
 Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
 
 \begin{figure}
- \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
- \caption{Barplot of the number of galaxies of each type that were injected, detected by \legacypipe\, (recovered), and classified by \tractor \, (tractor). An equal fraction of exponential and \dev\, galaxies are recovered, but the majority of \dev\, galaxies are misclassified as exponential. Source detection is independent of source type, but \tractor model selection is biased against \dev\, galaxies. Note, type REX are called as EXP in this plot.}
- \label{fig:number-per-type-eboss-ngc}
-\end{figure}
-
-\begin{figure}
- \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
- \caption{Confusion matrix showing how the true model for a source (y-axis) gets classified by \tractor\, (x-axis). About 70\% of de Vaucouleurs galaxies are misclassified by Tractor compared to only 5\% for exponential galaxies.}
- \label{fig:confusion-matrix-eboss-ngc}
+     \subfloat[\label{fig:number-per-type}]{
+       \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
+     }
+     \hfill
+     \subfloat[\label{fig:confusion}]{
+       \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
+     }
+\caption{(Top) Barplot of the number of galaxies of each type that were injected, detected by \legacypipe\, (recovered), and classified by \tractor \, (tractor). An equal fraction of exponential and \dev\, galaxies are recovered, but the majority of \dev\, galaxies are misclassified as exponential. Source detection is independent of source type, but \tractor model selection is biased against \dev\, galaxies. Note, type REX are called as EXP in this plot. (Bottom) Confusion matrix showing how the true model for a source (y-axis) gets classified by \tractor\, (x-axis). About 70\% of de Vaucouleurs galaxies are misclassified by Tractor compared to only 5\% for exponential galaxies. }
+\label{fig:rhalf-type}
 \end{figure}
 
 \obiwan\, injects sources at the nearest pixel center, so there is a systematic offset of 0.4\arcsec in the RA and Dec residuals between the true source centroid and \tractor's measurement of it (see Fig. \ref{fig:delta-radec}). The offset would be equal to the DECaLS pixel scale, 0.262\arcsec / pixel, but co-registry and simultaneous fitting of multiple images makes it larger.
@@ -545,6 +545,12 @@ Although source detection is independent of source type, \tractor model selectio
  \includegraphics[width=7 cm]{delta_dec_vs_delta_ra}
  \caption{RA and Dec residuals (arcsec) between the true centroid and \tractor's measurement of it. There is a systematic offset of 0.4\arcsec because \obiwan\, injects sources at the nearest pixel center. The offset would be equal to the DECaLS pixel scale, 0.262\arcsec / pixel, but co-registry and simultaneous fitting of multiple images makes it larger.}
  \label{fig:delta-radec}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=7 cm]{redshifts_recovered}
+ \caption{(Top) Redshift PDF for NGC ELGs that are injected (blue) and those that \legacypipe\, recovers (green). (Bottom) Fraction of injected NGC ELGs that \legacypipe\, recovers (green) binned by redshift. Magenta shows the fraction of NGC ELGs that are due to contamination (not true NGC ELGs but are pass target selection using \tractor's measurements).}
+ \label{fig:redshifts-recovered}
 \end{figure}
 
 \obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
@@ -589,10 +595,17 @@ AND SEP NORM GAUSSIAN PLOTS INTO SIMP, EXP, DEV AND DITTO FOR NUM STD DEV PLOTS
 %\end{figure}
 
 \begin{figure}
- \includegraphics[width=0.75\columnwidth]{hist_true_rhalf_by_type}
- \caption{(Middle) For type SIMP, \tractor\, $\rhalf$ measurements very good. Although type SIMP sources are predominately $\rhalf \sim 0.5$\arcsec sources and have a higher fraction of $\rhalf \sim 0.5$\arcsec sources than any other type, there are still $0.2 < \rhalf < 2$\arcsec sources and even these larger and smaller sources have much more accurate \tractor \, $\rhalf$ measurements than the same size sources classified as EXP and DEV. Type SIMP are generally fainter (Fig. \ref{fig:grz-hist-type}) than EXP and DEV, but this explain the higher $\rhalf$ accuracy for SIMP because the accuracy of \tractor\, flux measurements does not depend on \tractor \, type and only weakly on source brightness (Fig. \ref{fig:})}.
- \label{fig:rhalf-by-type}
+     \subfloat[Input Distributions\label{fig:rhalf-input}]{
+       \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
+     }
+     \hfill
+     \subfloat[Fraction Recovered\label{fig:rhalf-recovered}]{
+       \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
+     }
+\caption{(A) For type SIMP, \tractor\, $\rhalf$ measurements very good. Although type SIMP sources are predominately $\rhalf \sim 0.5$\arcsec sources and have a higher fraction of $\rhalf \sim 0.5$\arcsec sources than any other type, there are still $0.2 < \rhalf < 2$\arcsec sources and even these larger and smaller sources have much more accurate \tractor \, $\rhalf$ measurements than the same size sources classified as EXP and DEV. Type SIMP are generally fainter (Fig. \ref{fig:grz-hist-type}) than EXP and DEV, but this explain the higher $\rhalf$ accuracy for SIMP because the accuracy of \tractor\, flux measurements does not depend on \tractor \, type and only weakly on source brightness (Fig. \ref{fig:}) (B) Fraction of injected sources recovered by \legacypipe\, versus $\rhalf$. The chance of recovery fluctuates about 50\% for $\rhalf > 1.5$\arcsec.}
+\label{fig:rhalf-input-recovered}
 \end{figure}
+
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{grz_hist_by_type}
