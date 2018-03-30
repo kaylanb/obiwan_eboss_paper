@@ -474,9 +474,58 @@ Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the 
  \label{fig:e1-e2}
 \end{figure}
 
+Figs. \ref{fig:rec-lost-contam-color} shows how the distribution of ELGs in the eBOSS color box depends on sources that \tractor \, correctly measures as ELGs, contamination (are not ELGs but pass the target selection cuts for \tractor\, measurements), and lost sources (either to the source being an ELG but \tractor \, measurement failing target selection, \legacypipe\, source detection not finding the source, or the source is removed by the {\tt{fracin}} cut (see Fig. \ref{fig:dflux-systematic}). Fig. \ref{fig:rec-lost-contam-mag} shows how the  \gb, \rband, \zb\, magnitude distributions are affected.
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
+ \caption{eBOSS color box (g-r versus r-z) for the injected galaxies. True color is on the left and \tractor-measured color on the right. (Blue) True Positives: eBOSS ELGs that remain eBOSS ELGs after \tractor\, measures them. (Green) False Positives (a.k.a. contamination): galaxies that are not eBOSS ELGs but that pass eBOSS ELG target selection after \tractor\, measures them. (Cyan) Primary reason for False Negatives: eBOSS ELGs that fail eBOSS ELG target selection after \tractor\, measures them. (Magenta) Secondary reason for False Negatives: eBOSS ELGs that \legacypipe\, fails to detect and/or model.}
+ \label{fig:rec-lost-contam-color}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=7 cm]{rec_lost_contam_grz}
+ \caption{Histograms of \gb, \rband, \zb mag (top to bottom) for \tractor\, True Positives (blue), False Positives (a.k.a contamination, green), and False Negatives (cyan and magenta). Loosing eBOSS ELGs because \tractor\, measurements fail eBOSS target selection (cyan) is the dominant way that the injected sample of galaxies is modified. 
+ %It affects at least 50\% of the injected sample. 
+ The number of non-eBOSS ELGs that are added to the sample (green), and the number of eBOSS ELGs that are lost by failing to detect or model them (magenta), is nearly constant with magnitude and affects at most 10\% of the injected sample.}
+ \label{fig:rec-lost-contam-mag}
+\end{figure}
+
 \section{Biases and Systematics in \legacypipe}
 
-Which simulated galaxies does \legacypipe\, detect and model, and how are the \tractor\, measured properties different from input truth? Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
+Which simulated galaxies does \legacypipe\, detect and model, and how do the \tractor\, measured properties differ from input truth? 
+
+\begin{figure}
+     \subfloat[\label{fig:fracin-present}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_notsubmean}
+     }
+     \hfill
+     \subfloat[Bad sources at zero removed and mean subtracted\label{fig:fracin-removed}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+     }
+\caption{(Left) Number of standard deviations including bad sources at x = 0, and systematic offset to x < 0. (Right) Number of standard deviations after removing bad sources at x = 0 and then subtracting the mean.}
+\label{fig:dflux-systematic}
+\end{figure}
+
+\begin{figure}
+     \subfloat[Fracin $< 0.2$ are bad\label{fig:fracin-2dhist}]{
+       \includegraphics[width=0.45\columnwidth]{fracin_vs_numstddev_2dhist}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:fracin-dflux}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_keep_bad_020_notsubmean}
+     }
+\caption{}
+\label{fig:}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.8\columnwidth]{hist_all_quantities_fracin_cut}
+ \caption{}
+ \label{fig:}
+\end{figure}
+
+
+Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
@@ -488,12 +537,6 @@ Which simulated galaxies does \legacypipe\, detect and model, and how are the \t
  \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
  \caption{Confusion matrix showing how the true model for a source (y-axis) gets classified by \tractor\, (x-axis). About 70\% of de Vaucouleurs galaxies are misclassified by Tractor compared to only 5\% for exponential galaxies.}
  \label{fig:confusion-matrix-eboss-ngc}
-\end{figure}
-
-\begin{figure}
- \includegraphics[width=\columnwidth]{grz_hist_by_type2}
- \caption{(Left) PDFs of \gb, \rband, \zb mag (top to bottom) for EXP (blue), DEV (green), and SIMP (faint magenta) sources as classified by \tractor. The EXP and DEV PDFs are nearly identical for all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) The same as Right but for SIMP (magenta), PSF (cyan), and EXP (faint blue) sources. The PDFs for SIMP and PSF are similar but PSF is shifted to fainter sources by 0.1 - 0.2 mag.}
- \label{fig:grz-hist-type}
 \end{figure}
 
 \obiwan\, injects sources at the nearest pixel center, so there is a systematic offset of 0.4\arcsec in the RA and Dec residuals between the true source centroid and \tractor's measurement of it (see Fig. \ref{fig:delta-radec}). The offset would be equal to the DECaLS pixel scale, 0.262\arcsec / pixel, but co-registry and simultaneous fitting of multiple images makes it larger.
@@ -510,20 +553,69 @@ Which simulated galaxies does \legacypipe\, detect and model, and how are the \t
 INSERT DMAG vs MAG PLOTS BY TYPE BC SIMP MAY BE BIASED
 AND SEP NORM GAUSSIAN PLOTS INTO SIMP, EXP, DEV AND DITTO FOR NUM STD DEV PLOTS
 
-
 \begin{figure}
- \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
- \caption{eBOSS color box (g-r versus r-z) for the injected galaxies. True color is on the left and \tractor-measured color on the right. (Blue) True Positives: eBOSS ELGs that remain eBOSS ELGs after \tractor\, measures them. (Green) False Positives (a.k.a. contamination): galaxies that are not eBOSS ELGs but that pass eBOSS ELG target selection after \tractor\, measures them. (Cyan) Primary reason for False Negatives: eBOSS ELGs that fail eBOSS ELG target selection after \tractor\, measures them. (Magenta) Secondary reason for False Negatives: eBOSS ELGs that \legacypipe\, fails to detect and/or model.}
- \label{fig:rec-lost-contam-color}
+ \includegraphics[width=\columnwidth]{dmag_vs_grzmag_bytype_all}
+ \caption{}
+ \label{fig:dmag-2dhist}
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=7 cm]{rec_lost_contam_grz}
- \caption{Histograms of \gb, \rband, \zb mag (top to bottom) for \tractor\, True Positives (blue), False Positives (a.k.a contamination, green), and False Negatives (cyan and magenta). Loosing eBOSS ELGs because \tractor\, measurements fail eBOSS target selection (cyan) is the dominant way that the injected sample of galaxies is modified. 
- %It affects at least 50\% of the injected sample. 
- The number of non-eBOSS ELGs that are added to the sample (green), and the number of eBOSS ELGs that are lost by failing to detect or model them (magenta), is nearly constant with magnitude and affects at most 10\% of the injected sample.}
- \label{fig:rec-lost-contam-mag}
+ \includegraphics[width=\columnwidth]{num_std_dev_vs_grzmag_bytype_all}
+ \caption{The spread in $\Delta\,$ \gb, \rband, \zb\, do not depend on whether \tractor\, classifies the source as PSF, SIMP, EXP, or DEV.}
+ \label{fig:num-std-dev-2dhist}
 \end{figure}
+
+\begin{figure}
+     \subfloat[EXP\label{fig:rhalf-exp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean}
+     }
+     \hfill
+     \subfloat[DEV\label{fig:rhalf-dev}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean.png}
+     }
+      \hfill
+     \subfloat[SIMP\label{fig:rhalf-simp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean.png}
+     }
+\caption{Number of standard deviations away from truth of \tractor's $\rhalf$ measurements. As with similar plots for flux, there is a systematic offset between \tractor\, and truth which we remove by subtracting the mean. (Top) For type EXP, \tractor's $\rhalf$ errors appear gaussian distributed and about 3x larger than \tractor's ivar implies. (Middle) DEV, errors appear gaussian distributed and about 5x larger than \tractor's ivar. (Bottom) SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}).}
+\label{fig:rhalf-type}
+\end{figure}
+
+
+%\begin{figure}
+% \includegraphics[width=0.75\columnwidth]{residual_gaussfit_rhalf_bytype_PSF}
+% \caption{Distribution of residuals for effective half light radius, $\rhalf = FWHM/2$, for type PSF sources.}
+% \label{fig:rhalf-for-psf}
+%\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.75\columnwidth]{hist_true_rhalf_by_type}
+ \caption{(Middle) For type SIMP, \tractor\, $\rhalf$ measurements very good. Although type SIMP sources are predominately $\rhalf \sim 0.5$\arcsec sources and have a higher fraction of $\rhalf \sim 0.5$\arcsec sources than any other type, there are still $0.2 < \rhalf < 2$\arcsec sources and even these larger and smaller sources have much more accurate \tractor \, $\rhalf$ measurements than the same size sources classified as EXP and DEV. Type SIMP are generally fainter (Fig. \ref{fig:grz-hist-type}) than EXP and DEV, but this explain the higher $\rhalf$ accuracy for SIMP because the accuracy of \tractor\, flux measurements does not depend on \tractor \, type and only weakly on source brightness (Fig. \ref{fig:})}.
+ \label{fig:rhalf-by-type}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{grz_hist_by_type}
+ \caption{(Left) PDFs of \gb, \rband, \zb mag (top to bottom) for EXP (blue), DEV (green), and SIMP (faint magenta) sources as classified by \tractor. The EXP and DEV PDFs are nearly identical for all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) The same as Right but for SIMP (magenta), PSF (cyan), and EXP (faint blue) sources. The PDFs for SIMP and PSF are similar but PSF is shifted to fainter sources by 0.1 - 0.2 mag.}
+ \label{fig:grz-hist-type}
+\end{figure}
+
+\begin{figure}
+     \subfloat[EXP\label{fig:e1e2-exp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_EXP}
+     }
+     \hfill
+     \subfloat[DEV\label{fig:e1e2-dev}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_DEV}
+     }
+      \hfill
+     \subfloat[SIMP\label{fig:e1e2-simp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_SIMP}
+     }
+\caption{Number of standard deviations away from truth of \tractor's ellipticity measurements (e1 on top, e2 on bottom). There is almost no offset between between \tractor\, and truth, but we still subtract the mean. (a) For type EXP, \tractor's e1 and e2 errors appear gaussian distributed and about 3x larger than \tractor's e1 ivar and e2 ivar imply. (b) DEV, same as panel a but with lower error, about 2.7x larger than \tractor's e1 ivar and e2 ivar imply. (c) SIMP, true e1 $\sim$ e2 $\sim 0$ and \tractor\, measures these very accurately, about 5x better than \tractor's e1 ivar and e2 ivar would imply.}
+\label{fig:e1e2-error}
+\end{figure}
+
 
 \section{Two Point Correlation Function}
 The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
