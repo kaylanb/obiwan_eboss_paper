@@ -312,7 +312,7 @@ Our simulated galaxies must be a representative sample of real ELGs or else we c
 
 In this paper, we only concern ourselves with Emission Line Galaxies (ELGs). These are blue star forming galaxies that are spectroscopically identified by a strong OII emission line. The DEEP2 Galaxy Redshift Survey (DEEP2, references) collected one of the largest samples of ELG spectra to date, since the spectral resolution resolves the OII emission line. To model the real population of ELGs, we match our DR3 Tractor catalogues to the DEEP2 catalogues using a 1\arcsec matching radius.
 
-This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra), brightness (g, r, z flux), and shape (half light radii, ellipticity) information. While the sample is biased by the DEEP2 selection function, the depth of DR5 imaging, and \tractor’s ability to measure the centroid, brightness, and shape, this is as good as we can do with publicly available data. The best possible sample is probably to use Hyper Suprime-Cam Subaru Survey (HSC-SS) imaging in the DEEP2 fields (Hayashi et al. 2017, Mehta et al. 2017).
+This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra), brightness (g, r, z flux), and shape (half light radii, ellipticity) information. While the sample is biased by the DEEP2 selection function, the depth of DR5 imaging, and \tractor's ability to measure the centroid, brightness, and shape, this is as good as we can do with publicly available data. The best possible sample is probably to use Hyper Suprime-Cam Subaru Survey (HSC-SS) imaging in the DEEP2 fields (Hayashi et al. 2017, Mehta et al. 2017).
 
 We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. 
 
@@ -432,7 +432,11 @@ We now generate a sample of properties for N ELGs that are representative of rea
  \label{fig:final-eboss-sample-10k}
 \end{figure}
 
-\subsection{Injecting the ELGs with \obiwan}
+\section{\legacypipe\, Measurements of Injected ELGs}
+
+Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
+
+\subsection{ELG Number Density and \tractor\, Model Selection}
 
 We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick), into the set of DECam CCDs used to produce DR3-era \tractor\, catalogues and the eBOSS ELG target lists \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs and the eBOSS NGC and SGC regions that we consider. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. 
 
@@ -474,7 +478,13 @@ Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the 
  \label{fig:e1-e2}
 \end{figure}
 
-Figs. \ref{fig:rec-lost-contam-color} shows how the distribution of ELGs in the eBOSS color box depends on sources that \tractor \, correctly measures as ELGs, contamination (are not ELGs but pass the target selection cuts for \tractor\, measurements), and lost sources (either to the source being an ELG but \tractor \, measurement failing target selection, \legacypipe\, source detection not finding the source, or the source is removed by the {\tt{fracin}} cut (see Fig. \ref{fig:dflux-systematic}). Fig. \ref{fig:rec-lost-contam-mag} shows how the  \gb, \rband, \zb\, magnitude distributions are affected.
+
+\subsection{Recovered, Contamination, and Loss in the Simulated ELG Sample}
+
+\legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that\legacypipe\, fails to detect (not-detected), fail target selection after \legacypipe\, measures them (fail-ts), or are removed by the {\tt{fracin}} cut (fracin-cut; see Section \ref{sec:biases-systematics}, Fig. \ref{fig:dflux-systematic}).
+%There are two types of simulated ELGs in the sample of galaxies that pass eBOSS target selection using \tractor\, catalogues: 
+
+The distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box are shown in Fig. \ref{fig:rec-lost-contam-color} and their \gb, \rband, \zb\, magnitude distributions are shown in Fig. \ref{fig:rec-lost-contam-mag}.
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
@@ -490,24 +500,118 @@ Figs. \ref{fig:rec-lost-contam-color} shows how the distribution of ELGs in the 
  \label{fig:rec-lost-contam-mag}
 \end{figure}
 
-\section{Biases and Systematics in \legacypipe}
-
-Which simulated galaxies does \legacypipe\, detect and model, and how do the \tractor\, measured properties differ from input truth? 
+Fig. \ref{fig:redshifts-recovered} shows how the input n(z) for eBOSS ELGs is modified by \legacypipe\, and the fraction of contaminants in redshift bins.
 
 \begin{figure}
-     \subfloat[\label{fig:fracin-present}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_notsubmean}
+ \includegraphics[width=0.7\columnwidth]{redshifts_recovered}
+ \caption{(Top) Redshift PDF for NGC ELGs that are injected (blue) and those that \legacypipe\, recovers (green). (Bottom) Fraction of injected NGC ELGs that \legacypipe\, recovers (green) binned by redshift. Magenta shows the fraction of NGC ELGs that are due to contamination (not true NGC ELGs but are pass target selection using \tractor's measurements).}
+ \label{fig:redshifts-recovered}
+\end{figure}
+
+\subsection{Uncertainties on \tractor\, Measurement of flux, $\rhalf$, and ellipticity (e1, e2)} 
+
+\begin{tabular}{ccc}
+      One pass & Two passes & Three passes \\
+      % list of figures goes left to right, then down a row, ...
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020} &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean} &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean} 
+      \\
+      &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean} &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean} 
+      \\
+      &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean} &
+      \includegraphics[width=0.2\textwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean}
+      \\
+\end{tabular}
+
+%\begin{figure}
+%    \subfloat[EXP\label{fig:rhalf-exp}]{
+%       \includegraphics[width=0.45\textwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+%     }
+%     \wfill
+%     \subfloat[EXP\label{fig:rhalf-exp}]{
+%       \includegraphics[width=0.45\textwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean}
+%     }
+%     \hfill
+%     \subfloat[DEV\label{fig:rhalf-dev}]{
+%       \includegraphics[width=0.45\textwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean.png}
+%     }
+%      \hfill
+%     \subfloat[SIMP\label{fig:rhalf-simp}]{
+%       \includegraphics[width=0.45\textwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean.png}
+%     }
+%\caption{}
+%\label{fig:tractor-uncertainty}
+%\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+ \caption{Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux measurements. There is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). \tractor's \gb, \rband, \zb\, flux errors appear gaussian distributed and are 1.75-2x larger than \tractor ivar implies.}
+ \label{fig:redshifts-recovered}
+\end{figure}
+
+\begin{figure}
+     \subfloat[EXP\label{fig:rhalf-exp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean}
      }
      \hfill
-     \subfloat[Bad sources at zero removed and mean subtracted\label{fig:fracin-removed}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+     \subfloat[DEV\label{fig:rhalf-dev}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean.png}
      }
-\caption{(Left) Number of standard deviations including bad sources at x = 0, and systematic offset to x < 0. (Right) Number of standard deviations after removing bad sources at x = 0 and then subtracting the mean.}
+      \hfill
+     \subfloat[SIMP\label{fig:rhalf-simp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean.png}
+     }
+\caption{Number of standard deviations away from truth of \tractor's $\rhalf$ measurements. As with similar plots for flux, there is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). (Top) For type EXP, \tractor's $\rhalf$ errors appear gaussian distributed and about 3x larger than \tractor's ivar implies. (Middle) DEV, errors appear gaussian distributed and about 5x larger than \tractor's ivar. (Bottom) SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}).}
+\label{fig:rhalf-type}
+\end{figure}
+
+\begin{figure}
+     \subfloat[EXP\label{fig:e1e2-exp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_EXP}
+     }
+     \hfill
+     \subfloat[DEV\label{fig:e1e2-dev}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_DEV}
+     }
+      \hfill
+     \subfloat[SIMP\label{fig:e1e2-simp}]{
+       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_SIMP}
+     }
+\caption{Number of standard deviations away from truth of \tractor's ellipticity measurements (e1 on top, e2 on bottom). There is almost no offset between between \tractor\, and truth, but we still subtract the mean. (a) For type EXP, \tractor's e1 and e2 errors appear gaussian distributed and about 3x larger than \tractor's e1 ivar and e2 ivar imply. (b) DEV, same as panel a but with lower error, about 2.7x larger than \tractor's e1 ivar and e2 ivar imply. (c) SIMP, true e1 $\sim$ e2 $\sim 0$ and \tractor\, measures these very accurately, about 5x better than \tractor's e1 ivar and e2 ivar would imply.}
+\label{fig:e1e2-error}
+\end{figure}
+
+\section{Additional biases and systematics in \legacypipe\, and \obiwan}
+\label{sec:biases-systematics}
+
+This section presents biases and systematics in \legacypipe\, that are not essential to eBOSS science but very important for properly analyzing our \obiwan\, data set.
+
+\begin{figure}
+     \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_notsubmean}
+     }
+     \hfill
+     \subfloat[Bad sources are linearly separable: {\tt{fracin}} $< 0.2$\label{fig:fracin-2dhist}]{
+       \includegraphics[width=0.45\columnwidth]{fracin_vs_numstddev_2dhist}
+     }
+     \hfill
+     \subfloat[Bad sources only\label{fig:fracin-dflux}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_keep_bad_020_notsubmean}
+     }
+     \hfill
+     \subfloat[Distribution after removing bad sources and subtracting the mean\label{fig:fracin-removed}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+     }
+\caption{The input distribution of \tractor\,, truth residuals (top left) and the bad sources and systematic offsets we remove to arrive at the true distribution of \tractor\,, truth residuals (bottom right). (Top Left) Number of standard deviations including bad sources at x = 0, and systematic offset to x < 0. (Top Right) The excess of sources with flux residual of zero are bad sources. We find that these have {\tt{fracin}} $< 0.2$ in the \tractor\, catalogues and are linearly separable from all other sources. (Bottom Left) Number of standard deviations for bad sources ({\tt{fracin}} $< 0.2$) (Bottom Right) Number of standard deviations after removing bad sources and subtracting the mean.}
 \label{fig:dflux-systematic}
 \end{figure}
 
 \begin{figure}
-     \subfloat[Fracin $< 0.2$ are bad\label{fig:fracin-2dhist}]{
+     \subfloat[\label{fig:fracin-2dhist}]{
        \includegraphics[width=0.45\columnwidth]{fracin_vs_numstddev_2dhist}
      }
      \hfill
@@ -547,12 +651,6 @@ Although source detection is independent of source type, \tractor model selectio
  \label{fig:delta-radec}
 \end{figure}
 
-\begin{figure}
- \includegraphics[width=7 cm]{redshifts_recovered}
- \caption{(Top) Redshift PDF for NGC ELGs that are injected (blue) and those that \legacypipe\, recovers (green). (Bottom) Fraction of injected NGC ELGs that \legacypipe\, recovers (green) binned by redshift. Magenta shows the fraction of NGC ELGs that are due to contamination (not true NGC ELGs but are pass target selection using \tractor's measurements).}
- \label{fig:redshifts-recovered}
-\end{figure}
-
 \obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
 % We can also ask, what magnitude source in these images becomes a 5\sigma detection with \tractor? (this depends on tractor flux ivar so is not independent of tractor)
 
@@ -571,21 +669,7 @@ AND SEP NORM GAUSSIAN PLOTS INTO SIMP, EXP, DEV AND DITTO FOR NUM STD DEV PLOTS
  \label{fig:num-std-dev-2dhist}
 \end{figure}
 
-\begin{figure}
-     \subfloat[EXP\label{fig:rhalf-exp}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean}
-     }
-     \hfill
-     \subfloat[DEV\label{fig:rhalf-dev}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean.png}
-     }
-      \hfill
-     \subfloat[SIMP\label{fig:rhalf-simp}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean.png}
-     }
-\caption{Number of standard deviations away from truth of \tractor's $\rhalf$ measurements. As with similar plots for flux, there is a systematic offset between \tractor\, and truth which we remove by subtracting the mean. (Top) For type EXP, \tractor's $\rhalf$ errors appear gaussian distributed and about 3x larger than \tractor's ivar implies. (Middle) DEV, errors appear gaussian distributed and about 5x larger than \tractor's ivar. (Bottom) SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}).}
-\label{fig:rhalf-type}
-\end{figure}
+
 
 
 %\begin{figure}
@@ -611,22 +695,6 @@ AND SEP NORM GAUSSIAN PLOTS INTO SIMP, EXP, DEV AND DITTO FOR NUM STD DEV PLOTS
  \includegraphics[width=\columnwidth]{grz_hist_by_type}
  \caption{(Left) PDFs of \gb, \rband, \zb mag (top to bottom) for EXP (blue), DEV (green), and SIMP (faint magenta) sources as classified by \tractor. The EXP and DEV PDFs are nearly identical for all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) The same as Right but for SIMP (magenta), PSF (cyan), and EXP (faint blue) sources. The PDFs for SIMP and PSF are similar but PSF is shifted to fainter sources by 0.1 - 0.2 mag.}
  \label{fig:grz-hist-type}
-\end{figure}
-
-\begin{figure}
-     \subfloat[EXP\label{fig:e1e2-exp}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_EXP}
-     }
-     \hfill
-     \subfloat[DEV\label{fig:e1e2-dev}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_DEV}
-     }
-      \hfill
-     \subfloat[SIMP\label{fig:e1e2-simp}]{
-       \includegraphics[width=0.7\columnwidth]{num_std_dev_gaussfit_e1_e2_SIMP}
-     }
-\caption{Number of standard deviations away from truth of \tractor's ellipticity measurements (e1 on top, e2 on bottom). There is almost no offset between between \tractor\, and truth, but we still subtract the mean. (a) For type EXP, \tractor's e1 and e2 errors appear gaussian distributed and about 3x larger than \tractor's e1 ivar and e2 ivar imply. (b) DEV, same as panel a but with lower error, about 2.7x larger than \tractor's e1 ivar and e2 ivar imply. (c) SIMP, true e1 $\sim$ e2 $\sim 0$ and \tractor\, measures these very accurately, about 5x better than \tractor's e1 ivar and e2 ivar would imply.}
-\label{fig:e1e2-error}
 \end{figure}
 
 
