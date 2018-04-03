@@ -339,38 +339,7 @@ We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and 
 
 \section{Results}
 
-\subsection{The Angular Correlation Function}
-
-To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
-
-\subsubsection{Weight Maps}
-
-Future studies that want to use \obiwan\, randoms for computing correlation functions can use the following maps to up- and down-weight their randoms.
-
-\begin{figure}
-     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
-     }
-\caption{Fraction of injected galaxies recovered by \legacypipe. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}). ADD HEATMAP OF FRACTION OF FRACTION RECOVERED USING ANYMASK == 0}
-\label{fig:frac-recovered-eboss}
-\end{figure}
-
-\subsubsection{eBOSS NGC and SGC Analysis}
-\label{sec:eboss}
-
-INSERT HUI's WORK
-
-\subsection{Biases and Systematics in \legacypipe}
-
-This section introduces the types of things we can test with \obiwan. references the obiwan methods paper and section results biases and sys.
-
-Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
-
-\subsubsection{ELG Number Density and \tractor\, Model Selection}
+\subsection{\obiwan\, for eBOSS NGC and SGC CCDs}
 
 We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick), into the set of DECam CCDs used to produce DR3-era \tractor\, catalogues and the eBOSS ELG target lists \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs and the eBOSS NGC and SGC regions that we consider. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. 
 
@@ -384,6 +353,18 @@ We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / 
      }
 \caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs from the \tractor\, catalogues that used to select ELG targets.}
 \label{fig:ccds-eboss}
+\end{figure}
+
+\begin{figure}
+     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
+     }
+\caption{Fraction of injected galaxies recovered by \legacypipe. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}).}
+\label{fig:frac-recovered-eboss}
 \end{figure}
 
 \begin{figure}
@@ -411,6 +392,27 @@ Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the 
  \caption{(Left) Position angle (pa) versus minor to major axis ratio (ba) for simulated galaxies. (Right) The corresponding ellipticity components (e2, e1).}
  \label{fig:e1-e2}
 \end{figure}
+
+\subsection{The Angular Correlation Function}
+
+To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
+
+\subsubsection{Weight Maps}
+
+Future studies that want to use \obiwan\, randoms for computing correlation functions can use the maps of fraction recovered (Fig. \ref{fig:frac-recovered-eboss}) as weights to up- and down-sample their randoms.
+
+\subsubsection{eBOSS NGC and SGC Analysis}
+\label{sec:eboss}
+
+INSERT HUI's WORK
+
+\subsection{Biases and Systematics in \legacypipe}
+
+This section introduces the types of things we can test with \obiwan. references the obiwan methods paper and section results biases and sys.
+
+Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
+
+\subsubsection{ELG Number Density and \tractor\, Model Selection}
 
 Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
 
@@ -697,15 +699,15 @@ This section presents biases and systematics in \legacypipe\, that are not essen
 \end{figure}
 
 \begin{figure}
-     \subfloat[Input Distributions\label{fig:rhalf-input}]{
-       \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
-     }
-     \hfill
-     \subfloat[Fraction Recovered\label{fig:rhalf-recovered}]{
-       \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
-     }
-\caption{(A) PDF of true $\rhalf$ for injected sources (top) compared to the true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (middle) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec. The most common recovered source size for all \tractor\, types, not just SIMP, is also $\rhalf \sim 0.5$\arcsec. PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. (B) How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery fluctuates about 50\%.}
-\label{fig:rhalf-input-recovered}
+ \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
+ \caption{PDF of true $\rhalf$ for injected sources (top) compared to the true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (middle) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec. The most common recovered source size for all \tractor\, types, not just SIMP, is also $\rhalf \sim 0.5$\arcsec. PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. }
+ \label{fig:rhalf-input}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
+ \caption{How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery fluctuates about 50\%.}
+ \label{fig:rhalf-recovered}
 \end{figure}
 
 \begin{figure}
