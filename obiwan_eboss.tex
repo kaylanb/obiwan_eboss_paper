@@ -217,8 +217,8 @@
 
 \author[K. J. Burleigh]{
 Kaylan J. Burleigh,$^{1,2}$ \thanks{E-mail: kaylanb@berkeley.edu (KJB)}
-Johan Comparat,$^{3,4}$
 Hui Kong,$^{5}$
+Johan Comparat,$^{3,4}$
 John Moustakas,$^{6}$ 
 \newauthor
 Anand Raichoor,$^{7,8}$
@@ -303,13 +303,15 @@ The five images in Fig. \ref{fig:1000-words} show how Obiwan works. The process 
  \label{fig:examples-faint}
 \end{figure} 
 
-\subsection{Randoms}
+\subsection{Monte-Carlo}
 
 We add fake galaxies to the images at random locations, run \legacypipe, and repeat until there are many more simulated galaxies than real ones. The simulated galaxies that \legacypipe\, detects and models are the ``randoms" that a correlation function estimator would use. These randoms have been modified by the full covariance between all imaging systematics, those we expect such as stellar density and seeing, those previously unknown, and the biases and systematics inherit to the \legacypipe\, pipeline itself. 
 
 Our simulated galaxies must be a representative sample of real ELGs or else we cannot use them as randoms. The next section describes how we generate a representative sample by comparing \tractor\, catalogues from DR5 to  spectroscopically confirmed ELG galaxies from DEEP2.  
 
-\subsection{DEEP2}
+\subsection{Injecting Realistic ELGs}
+
+Section \ref{sec:input-sample}
 
 In this paper, we only concern ourselves with Emission Line Galaxies (ELGs). These are blue star forming galaxies that are spectroscopically identified by a strong OII emission line. The DEEP2 Galaxy Redshift Survey (DEEP2, references) collected one of the largest samples of ELG spectra to date, since the spectral resolution resolves the OII emission line. To model the real population of ELGs, we match our DR3 Tractor catalogues to the DEEP2 catalogues using a 1\arcsec matching radius.
 
@@ -317,7 +319,215 @@ This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra
 
 We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. 
 
+\subsection{The Angular Correlation Function}
+
+The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
+
+Computing the correlation function reduces to counting all pairs of galaxies with separation falling within a given bin. \cite{landy93} showed that 
+
+\begin{align}
+\xi(\Delta s) = \frac{GG(\Delta s) - 2 GR (\Delta s) + RR (\Delta s)}{RR (\Delta s)} \label{eqn:lz93}
+\end{align}
+
+\noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
+
+The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
+
+We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
+
+\section{Results}
+
+\subsection{The Angular Correlation Function}
+
+To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
+
+\subsubsection{Weight Maps}
+
+Future studies that want to use \obiwan\, randoms for computing correlation functions can use the following maps to up- and down-weight their randoms.
+
+\begin{figure}
+     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
+       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
+     }
+\caption{Fraction of injected galaxies recovered by \legacypipe. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}).}
+\label{fig:frac-recovered-eboss}
+\end{figure}
+
+\subsubsection{eBOSS NGC and SGC Analysis}
+\label{sec:eboss}
+
+INSERT HUI's WORK
+
+\subsection{Biases and Systematics in \legacypipe}
+
+This section introduces the types of things we can test with \obiwan. references the obiwan methods paper and section results biases and sys.
+
+Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
+
+\subsubsection{ELG Number Density and \tractor\, Model Selection}
+
+We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick), into the set of DECam CCDs used to produce DR3-era \tractor\, catalogues and the eBOSS ELG target lists \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs and the eBOSS NGC and SGC regions that we consider. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. 
+
+\begin{figure}
+     \subfloat[NGC\label{fig:ccds-ngc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:ccds-sgc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_sgc}
+     }
+\caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs from the \tractor\, catalogues that used to select ELG targets.}
+\label{fig:ccds-eboss}
+\end{figure}
+
+\begin{figure}
+     \subfloat[NGC\label{fig:number-density-eboss-ngc}]{
+       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:number-density-eboss-sgc}]{
+       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_sgc}
+     }
+\caption{Number density of simulated galaxies in the NGC and SGC footprints. We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG targets. The eBOSS ELG target densities are 200 and 240 targets / deg$^2$ in the NGC and SGC, respectively, so the density of simulated ELGs is at least X times higher than the target density for real ELGs.}
+\label{fig:number-density-eboss}
+\end{figure}
+
+Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. The distribution of position angles (pa), minor to major axis ratios (ba), and corresponding ellipticity components (e2, e1) are shown in Fig. \ref{fig:e1-e2}. 
+
+\begin{figure}
+ \includegraphics[width=5 cm]{grz_hist_input_ext}
+ \caption{\gb, \rband, \zb\, magnitude (top to bottom) of simulated galaxies with (green) and without (blue) galactic extinction. Extincted sources are fainter and the effect is stronger for bluer bands.}
+ \label{fig:grz-hist}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{e1_e2_input}
+ \caption{(Left) Position angle (pa) versus minor to major axis ratio (ba) for simulated galaxies. (Right) The corresponding ellipticity components (e2, e1).}
+ \label{fig:e1-e2}
+\end{figure}
+
+Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
+
+\begin{figure}
+     \subfloat[\label{fig:number-per-type}]{
+       \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
+     }
+     \hfill
+     \subfloat[\label{fig:confusion}]{
+       \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
+     }
+\caption{(Top) Barplot comparing the number of galaxies injected versus recovered by \legacypipe. The injected population is 89\% exponential and 11\% \dev\,, with 76\% of the exponentials and 73\% of the \dev\, recovered by \legacypipe. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources. (Bottom) Confusion matrix showing the fraction of truly exponential or \dev\, sources that \tractor\, models as type PSF, SIMP, EXP, DEV, or COMP sources. About 95\% of exponential sources are modeled as such by tractor; however, only 20\% of the \dev\, sources are modeled as \dev\, with 50\% and 20\% modeled as SIMP and EXP, respectively. \tractor\, model selection penalizes EXP and DEV sources equally (Burleigh \& Moustakas et al. 2018), but \tractor\, is biased towards EXP sources. 20\% of \dev\, sources are modeled as EXP compared to only 5\% of exponential modeled as DEV.}
+\label{fig:rhalf-type}
+\end{figure}
+
+\subsubsection{Uncertainties on \tractor\, Measurement of flux, $\rhalf$, and ellipticity (e1, e2)} 
+
+\begin{figure*}
+\begin{center}
+\begin{tabular}{ccc}
+      Flux & $\rhalf$ & e1, e2 \\
+      % list of figures goes left to right, then down a row, ...
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_g} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_EXP} 
+      \\
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_r} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_DEV} 
+      \\
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_z} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean} &
+      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_SIMP}
+      \\
+\end{tabular}
+\end{center}
+\caption{Residuals between truth and \tractor\, measurement. (Left column) Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux measurements. There is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). \tractor's \gb, \rband, \zb\, flux errors are 1.75-2x larger than \tractor ivar implies and appear gaussian distributed. (Middle column) Number of standard deviations away from truth of \tractor's $\rhalf$ measurements. As with similar plots for flux, there is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). {\it{Top:}} For type EXP, \tractor's $\rhalf$ errors are 3x larger than \tractor's ivar implies and appear gaussian distributed. {\it{Middle:}} DEV, errors appear gaussian distributed and about 5x larger than \tractor's ivar. {\it{Bottom:}} SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}). (Right column) Number of standard deviations away from truth of \tractor's ellipticity measurements (e1 on top, e2 on bottom). There is almost no offset between between \tractor\, and truth, but we still subtract the mean. {\it{Top:}} For type EXP, \tractor's e1 and e2 errors are 3x larger than \tractor's e1 ivar and e2 ivar imply and appear gaussian distributed. {\it{Middle:}} DEV, same as panel a but with lower error, about 2.7x larger than \tractor's e1 ivar and e2 ivar imply. {\it{Bottom:}} SIMP, true e1 $\sim$ e2 $\sim 0$ and \tractor\, measures these very accurately, about 5x better than \tractor's e1 ivar and e2 ivar would imply.
+    \label{fig:tractor-uncertainty}}
+\end{figure*}
+
+\subsubsection{Recovered ELGs, Contaminants, and Lost ELGs}
+
+\legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that\legacypipe\, fails to detect (not-detected), fail target selection after \legacypipe\, measures them (fail-ts), or are removed by the {\tt{fracin}} cut (fracin-cut; see Section \ref{sec:biases-systematics}, Fig. \ref{fig:dflux-systematic}).
+%There are two types of simulated ELGs in the sample of galaxies that pass eBOSS target selection using \tractor\, catalogues: 
+
+The distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box are shown in Fig. \ref{fig:rec-lost-contam-color} and their \gb, \rband, \zb\, magnitude distributions are shown in Fig. \ref{fig:rec-lost-contam-mag}.
+
+\begin{figure}
+ \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
+ \caption{Distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box. (Left) true color of source. (Right) \tractor\, measured color. From top to bottom are recovered ELGs (blue), contaminants (green), lost ELGs fail-ts (cyan), lost ELGs not-detected (magenta), and lost ELGs fracin-cut (yellow). Most contaminants come from the upper left region of the color box. The primary reason for loosing ELGs is that the \tractor\, measurements fail target selection.}
+ \label{fig:rec-lost-contam-color}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=7 cm]{rec_lost_contam_grz}
+ \caption{\gb, \rband, \zb\, magnitude histograms for recovered ELGs, contaminants, and lost ELGs, using the color scheme from Fig. \ref{fig:rec-lost-contam-color}. There are similar number of recovered ELGs and lost ELGs fail-ts for sources brighter than \gb < 22.5, \rband < 21.9, or \zb < 21.0, but there are many more lost ELGs fail-ts for fainter sources than that. The \gb, \rband, \zb\, distributions of contaminants, lost ELGs not-detected, and lost ELGs fracin-in are roughly uniform.}
+ \label{fig:rec-lost-contam-mag}
+\end{figure}
+
+Fig. \ref{fig:redshifts-recovered} shows how the input n(z) for eBOSS ELGs is modified by \legacypipe\, and the fraction of contaminants in redshift bins.
+
+\begin{figure}
+ \includegraphics[width=0.7\columnwidth]{redshifts_recovered}
+ \caption{(Top) PDF of redshift for injected ELGs (blue) and recovered ELGs (green). (Bottom) The fraction of the injected ELG sample that are recovered ELGs (green) compared to contaminants (magenta).}
+ \label{fig:redshifts-recovered}
+\end{figure}
+
+
+%\obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
+
+% We can also ask, what magnitude source in these images becomes a 5\sigma detection with \tractor? (this depends on tractor flux ivar so is not independent of tractor)
+
+
+\section{Plots to Make}
+\begin{itemize}
+\item galdepth vs. obi wan measured depth, where does the 20\% from validation fall?
+\item n(z) resulting from different depths
+\item autocorrelation functions for uniform-uniform rand, obiwan-obiwan rand
+\item cross correlate everything: (DD=obiwan-rand, RR=uniform-rand), (DD=DR5, RR=uniform-rand), (DD=DR5, RR=obiwan-rand), compare DR5 correlation with known systematics to obiwan-rand with know systematics 
+\item plots: BAO fit to angular CF 
+\end{itemize}
+
+\section{Conclusions}
+
+\begin{itemize}
+\item this is the way to assess bias/systematics when doing joint analysis of datasets from multiple telescopes
+\end{itemize}
+
+
+\section*{Acknowledgements} 
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
+
+% The best way to enter references is to use BibTeX:
+
+\bibliographystyle{mnras}  %{mnras} if file is mnras.bst
+\bibliography{bib} % {bib} if file is bib.bib
+
+
+% Alternatively you could enter them by hand, like this:
+% This method is tedious and prone to error if you have lots of references
+%\begin{thebibliography}{99}
+%\bibitem[\protect\citeauthoryear{Author}{2012}]{Author2012}
+%Author A.~N., 2013, Journal of Improbable Astronomy, 1, 1
+%\bibitem[\protect\citeauthoryear{Others}{2013}]{Others2013}
+%Others S., 2012, Journal of Interesting Stuff, 17, 198
+%\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
 \section{Simulating eBOSS ELG Galaxies}
+\label{sec:input-sample}
 
 \subsection{ELGs Selected By eBOSS}
 \label{sec:eboss-targets}
@@ -331,7 +541,7 @@ We use the joint tables (provided by Anand) of \tractor \, catalogue measurement
 \item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_7.fits|
 \end{itemize}
 
-\noindent to build a Gaussian Mixture Model for the brightness, shape, and redshift of eBOSS ELG targets. We assume that all galaxies that \tractor \, classifies as type PSF are compact or unresolved. We reclassify them as EXP with $\rhalf = \text{avg}(\text{FWHM}) / 2)$, where the average is over all bands. We also reclassify SIMP sources as EXP. We drop COMP sources because these comprise less than 1\% of the sample. 
+\noindent to construct a sample of eBOSS ELG targets each having a redshift, shape, and \gb, \rband, \zb flux. We assume that all sources \tractor \, classifies as type PSF are compact or unresolved galaxies. We reclassify them as EXP with $\rhalf = \text{avg}(\text{FWHM}) / 2)$, where the average is over all bands. We also reclassify SIMP sources as EXP. We drop COMP sources because these comprise less than 1\% of the sample. 
 %keep galaxies having reasonable \tractor\, measured $\rhalf$.
 
 DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the above sample into separate DEV and EXP samples. Fig. \ref{fig:ngc-incomplete} also shows that the NGC region is not complete for the \gb \,mag of the eBOSS ELGs, so we throw out all the NGC galaxies (about 30\% of the sample). This yields 77,525 EXP and 7,439 DEV galaxies. We refer to this as our eBOSS sample. The full list of cuts we apply is:
@@ -433,183 +643,7 @@ We now generate a sample of properties for N ELGs that are representative of rea
  \label{fig:final-eboss-sample-10k}
 \end{figure}
 
-\section{\legacypipe\, Measurements of Injected ELGs}
-
-Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
-
-\subsection{ELG Number Density and \tractor\, Model Selection}
-
-We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick), into the set of DECam CCDs used to produce DR3-era \tractor\, catalogues and the eBOSS ELG target lists \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs and the eBOSS NGC and SGC regions that we consider. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. 
-
-\begin{figure}
-     \subfloat[NGC\label{fig:ccds-ngc}]{%
-       \includegraphics[width=\columnwidth]{ccdsused_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:ccds-sgc}]{%
-       \includegraphics[width=\columnwidth]{ccdsused_eboss_sgc}
-     }
-\caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs from the \tractor\, catalogues that used to select ELG targets.}
-\label{fig:ccds-eboss}
-\end{figure}
-
-\begin{figure}
-     \subfloat[NGC\label{fig:number-density-eboss-ngc}]{
-       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:number-density-eboss-sgc}]{
-       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_sgc}
-     }
-\caption{Number density of simulated galaxies in the NGC and SGC footprints. We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG targets. The eBOSS ELG target densities are 200 and 240 targets / deg$^2$ in the NGC and SGC, respectively, so the density of simulated ELGs is at least X times higher than the target density for real ELGs.}
-\label{fig:number-density-eboss}
-\end{figure}
-
-Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. The distribution of position angles (pa), minor to major axis ratios (ba), and corresponding ellipticity components (e2, e1) are shown in Fig. \ref{fig:e1-e2}. 
-
-\begin{figure}
- \includegraphics[width=5 cm]{grz_hist_input_ext}
- \caption{\gb, \rband, \zb\, magnitude (top to bottom) of simulated galaxies with (green) and without (blue) galactic extinction. Extincted sources are fainter and the effect is stronger for bluer bands.}
- \label{fig:grz-hist}
-\end{figure}
-
-\begin{figure}
- \includegraphics[width=\columnwidth]{e1_e2_input}
- \caption{(Left) Position angle (pa) versus minor to major axis ratio (ba) for simulated galaxies. (Right) The corresponding ellipticity components (e2, e1).}
- \label{fig:e1-e2}
-\end{figure}
-
-Although source detection is independent of source type, \tractor model selection is biased against \dev\, galaxies (see Fig. \ref{fig:hbar}). An equal fraction of exponential and \dev\, galaxies are detected by \legacypipe (recovered), but the majority of \dev\, galaxies are misclassified as exponential. Fig. \ref{fig:confusion-matrix-eboss-ngc} quantifies the model selection bias. About 70\% of \dev\, galaxies are misclassified by \tractor\, compared to only 5\% for exponential galaxies. Fig. \ref{fig:grz-hist-type} shows that this bias towards EXP sources may not bias \tractor's flux measurements because EXP and DEV sources have nearly identical \gb, \rband, \zb distributions. SIMP and PSF sources are generally fainter sources near the detection limit, with PSF sources being about 0.1 - 0.2 mag fainter, so a bias towards SIMP galaxies would bias \tractor's flux measurements.
-
-\begin{figure}
-     \subfloat[\label{fig:number-per-type}]{
-       \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
-     }
-     \hfill
-     \subfloat[\label{fig:confusion}]{
-       \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
-     }
-\caption{(Top) Barplot of the number of galaxies of each type that were injected, detected by \legacypipe\, (recovered), and classified by \tractor \, (tractor). An equal fraction of exponential and \dev\, galaxies are recovered, but the majority of \dev\, galaxies are misclassified as exponential. Source detection is independent of source type, but \tractor model selection is biased against \dev\, galaxies. Note, type REX are called as EXP in this plot. (Bottom) Confusion matrix showing how the true model for a source (y-axis) gets classified by \tractor\, (x-axis). About 70\% of de Vaucouleurs galaxies are misclassified by Tractor compared to only 5\% for exponential galaxies. }
-\label{fig:rhalf-type}
-\end{figure}
-
-\subsection{Uncertainties on \tractor\, Measurement of flux, $\rhalf$, and ellipticity (e1, e2)} 
-
-\begin{figure*}
-\begin{center}
-\begin{tabular}{ccc}
-      Flux & $\rhalf$ & e1, e2 \\
-      % list of figures goes left to right, then down a row, ...
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_g} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_EXP_submean} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_EXP} 
-      \\
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_r} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_DEV_submean} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_DEV} 
-      \\
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_flux_separate_plots_z} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_rhalf_bytype_SIMP_submean} &
-      \includegraphics[width=0.3\textwidth]{num_std_dev_gaussfit_e1_e2_SIMP}
-      \\
-\end{tabular}
-\end{center}
-\caption{Residuals between truth and \tractor\, measurement. (Left column) Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux measurements. There is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). \tractor's \gb, \rband, \zb\, flux errors are 1.75-2x larger than \tractor ivar implies and appear gaussian distributed. (Middle column) Number of standard deviations away from truth of \tractor's $\rhalf$ measurements. As with similar plots for flux, there is a systematic offset between \tractor\, and truth which we remove by subtracting the mean (see Section \ref{sec:biases-systematics}). {\it{Top:}} For type EXP, \tractor's $\rhalf$ errors are 3x larger than \tractor's ivar implies and appear gaussian distributed. {\it{Middle:}} DEV, errors appear gaussian distributed and about 5x larger than \tractor's ivar. {\it{Bottom:}} SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}). (Right column) Number of standard deviations away from truth of \tractor's ellipticity measurements (e1 on top, e2 on bottom). There is almost no offset between between \tractor\, and truth, but we still subtract the mean. {\it{Top:}} For type EXP, \tractor's e1 and e2 errors are 3x larger than \tractor's e1 ivar and e2 ivar imply and appear gaussian distributed. {\it{Middle:}} DEV, same as panel a but with lower error, about 2.7x larger than \tractor's e1 ivar and e2 ivar imply. {\it{Bottom:}} SIMP, true e1 $\sim$ e2 $\sim 0$ and \tractor\, measures these very accurately, about 5x better than \tractor's e1 ivar and e2 ivar would imply.
-    \label{fig:tractor-uncertainty}}
-\end{figure*}
-
-\subsection{Recovered ELGs, Lost ELGs, and Contaminants}
-
-\legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that\legacypipe\, fails to detect (not-detected), fail target selection after \legacypipe\, measures them (fail-ts), or are removed by the {\tt{fracin}} cut (fracin-cut; see Section \ref{sec:biases-systematics}, Fig. \ref{fig:dflux-systematic}).
-%There are two types of simulated ELGs in the sample of galaxies that pass eBOSS target selection using \tractor\, catalogues: 
-
-The distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box are shown in Fig. \ref{fig:rec-lost-contam-color} and their \gb, \rband, \zb\, magnitude distributions are shown in Fig. \ref{fig:rec-lost-contam-mag}.
-
-\begin{figure}
- \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
- \caption{eBOSS color box (g-r versus r-z) for the injected galaxies. True color is on the left and \tractor-measured color on the right. (Blue) True Positives: eBOSS ELGs that remain eBOSS ELGs after \tractor\, measures them. (Green) False Positives (a.k.a. contamination): galaxies that are not eBOSS ELGs but that pass eBOSS ELG target selection after \tractor\, measures them. (Cyan) Primary reason for False Negatives: eBOSS ELGs that fail eBOSS ELG target selection after \tractor\, measures them. (Magenta) Secondary reason for False Negatives: eBOSS ELGs that \legacypipe\, fails to detect and/or model.}
- \label{fig:rec-lost-contam-color}
-\end{figure}
-
-\begin{figure}
- \includegraphics[width=7 cm]{rec_lost_contam_grz}
- \caption{Histograms of \gb, \rband, \zb mag (top to bottom) for \tractor\, True Positives (blue), False Positives (a.k.a contamination, green), and False Negatives (cyan and magenta). Loosing eBOSS ELGs because \tractor\, measurements fail eBOSS target selection (cyan) is the dominant way that the injected sample of galaxies is modified. 
- %It affects at least 50\% of the injected sample. 
- The number of non-eBOSS ELGs that are added to the sample (green), and the number of eBOSS ELGs that are lost by failing to detect or model them (magenta), is nearly constant with magnitude and affects at most 10\% of the injected sample.}
- \label{fig:rec-lost-contam-mag}
-\end{figure}
-
-Fig. \ref{fig:redshifts-recovered} shows how the input n(z) for eBOSS ELGs is modified by \legacypipe\, and the fraction of contaminants in redshift bins.
-
-\begin{figure}
- \includegraphics[width=0.7\columnwidth]{redshifts_recovered}
- \caption{(Top) Redshift PDF for NGC ELGs that are injected (blue) and those that \legacypipe\, recovers (green). (Bottom) Fraction of injected NGC ELGs that \legacypipe\, recovers (green) binned by redshift. Magenta shows the fraction of NGC ELGs that are due to contamination (not true NGC ELGs but are pass target selection using \tractor's measurements).}
- \label{fig:redshifts-recovered}
-\end{figure}
-
-
-
-\obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
-% We can also ask, what magnitude source in these images becomes a 5\sigma detection with \tractor? (this depends on tractor flux ivar so is not independent of tractor)
-
-
-\section{Two Point Correlation Function}
-The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
-
-Computing the correlation function reduces to counting all pairs of galaxies with separation falling within a given bin. \cite{landy93} showed that 
-
-\begin{align}
-\xi(\Delta s) = \frac{GG(\Delta s) - 2 GR (\Delta s) + RR (\Delta s)}{RR (\Delta s)} \label{eqn:lz93}
-\end{align}
-
-\noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
-
-The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
-
-We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
-
-To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
-
-\subsection{Weight Maps}
-
-Future studies that want to use \obiwan\, randoms for computing correlation functions can use the following maps to up- and down-weight their randoms.
-
-\begin{figure}
-     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
-     }
-\caption{Fraction of injected galaxies recovered by \legacypipe\, (i.e. detected and modeled) in the NGC and SGC footprints. Higher fractions are associated with more CCDs (see Fig. \ref{fig:ccds-eboss}).}
-\label{fig:frac-recovered-eboss}
-\end{figure}
-
-\subsection{eBOSS NGC and SGC Analysis}
-\label{sec:eboss}
-
-INSERT HUI's WORK
-
-\section{Plots to Make}
-\begin{itemize}
-\item galdepth vs. obi wan measured depth, where does the 20\% from validation fall?
-\item n(z) resulting from different depths
-\item autocorrelation functions for uniform-uniform rand, obiwan-obiwan rand
-\item cross correlate everything: (DD=obiwan-rand, RR=uniform-rand), (DD=DR5, RR=uniform-rand), (DD=DR5, RR=obiwan-rand), compare DR5 correlation with known systematics to obiwan-rand with know systematics 
-\item plots: BAO fit to angular CF 
-\end{itemize}
-
-\section{Conclusions}
-
-\begin{itemize}
-\item this is the way to assess bias/systematics when doing joint analysis of datasets from multiple telescopes
-\end{itemize}
-
-
-\section*{Acknowledgements} 
-
-\section{Additional biases and systematics in \legacypipe\, and \obiwan}
+\section{Biases and Systematics in \legacypipe}
 \label{sec:biases-systematics}
 
 This section presents biases and systematics in \legacypipe\, that are not essential to eBOSS science but very important for properly analyzing our \obiwan\, data set.
@@ -644,19 +678,19 @@ This section presents biases and systematics in \legacypipe\, that are not essen
 
 \begin{figure}
  \includegraphics[width=0.8\columnwidth]{hist_all_quantities_fracin_cut}
- \caption{}
+ \caption{(Bottom right) Fraction of injected exponential and \dev\, galaxies that are recovered by \legacypipe\, (orange) or remain after \legacypipe\, recovery and the cut on fracin $< 0.2$. The fracin cut removes 11\% of the recovered exponential and 11\% of the recovered \dev\, galaxies. These are similar fractions so the fracin cut should not introduce any systematics.}
  \label{fig:}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{num_std_dev_vs_grzmag_bytype_all}
- \caption{The spread in $\Delta\,$ \gb, \rband, \zb\, do not depend on whether \tractor\, classifies the source as PSF, SIMP, EXP, or DEV.}
+ \caption{Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux measurements (assuming \tractor\, ivar) versus \gb, \rband, \zb\, magnitude. Yellow lines are the q25, 50, 75 percentiles. \tractor's inverse variances are too small (Fig. \ref{fig:tractor-uncertainty}) and by a nearly constant amount, independent of the magnitude of the source. We find identical results when remaking this figure for only PSF, SIMP, EXP, and DEV sources, respectively. \tractor\, fluxes are too faint as previously discussed for Fig. \ref{fig:tractor-uncertainty}.}
  \label{fig:num-std-dev-2dhist}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dmag_vs_grzmag_bytype_all}
- \caption{}
+ \caption{Magnitude difference between \tractor's flux measurements and truth versus \gb, \rband, \zb\, magnitude. Top to bottom is \gb, \rband, \zb\, residuals.  Yellow lines are the q25, 50, 75 percentiles. The interquartile range is 0.1-0.2 mag for bright sources and 0.4-0.5 mag for faint sources.}
  \label{fig:dmag-2dhist}
 \end{figure}
 
@@ -668,13 +702,13 @@ This section presents biases and systematics in \legacypipe\, that are not essen
      \subfloat[Fraction Recovered\label{fig:rhalf-recovered}]{
        \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
      }
-\caption{(A) For type SIMP, \tractor\, $\rhalf$ measurements very good. Although type SIMP sources are predominately $\rhalf \sim 0.5$\arcsec sources and have a higher fraction of $\rhalf \sim 0.5$\arcsec sources than any other type, there are still $0.2 < \rhalf < 2$\arcsec sources and even these larger and smaller sources have much more accurate \tractor \, $\rhalf$ measurements than the same size sources classified as EXP and DEV. Type SIMP are generally fainter (Fig. \ref{fig:grz-hist-type}) than EXP and DEV, but this explain the higher $\rhalf$ accuracy for SIMP because the accuracy of \tractor\, flux measurements does not depend on \tractor \, type and only weakly on source brightness (Fig. \ref{fig:}) (B) Fraction of injected sources recovered by \legacypipe\, versus $\rhalf$. The chance of recovery fluctuates about 50\% for $\rhalf > 1.5$\arcsec.}
+\caption{(A) PDF of true $\rhalf$ for injected sources (top) compared to the true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (middle) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec. The most common recovered source size for all \tractor\, types, not just SIMP, is also $\rhalf \sim 0.5$\arcsec. PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. (B) How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery fluctuates about 50\%.}
 \label{fig:rhalf-input-recovered}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{grz_hist_by_type}
- \caption{(Left) PDFs of \gb, \rband, \zb mag (top to bottom) for EXP (blue), DEV (green), and SIMP (faint magenta) sources as classified by \tractor. The EXP and DEV PDFs are nearly identical for all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) The same as Right but for SIMP (magenta), PSF (cyan), and EXP (faint blue) sources. The PDFs for SIMP and PSF are similar but PSF is shifted to fainter sources by 0.1 - 0.2 mag.}
+ \caption{PDFs of true \gb, \rband, \zb magnitude for type EXP, DEV, PSF, and SIMP sources (blue, green, cyan, and magenta, respectively). (Left) EXP and DEV sources with SIMP for comparison. EXP and DEV have nearly identical PDFs, in all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) PSF and SIMP with EXP for comparison. In \rband\, and \zb, the EXP, SIMP, and PDFs have similar shape but PSF is located about 0.25 mag fainter than SIMP and SIMP is located about 0.25 mag fainter than EXP.}
  \label{fig:grz-hist-type}
 \end{figure}
 
@@ -710,32 +744,6 @@ We match DR3 to DEEP2 cutting to only spectroscopically confirmed galaxies.
 We model the DESI n(z) for ELGs by over-fitting a GMM model to the desired n(z) for DESI. We randomly sampled 100,000 points from the Sanchez \& Kirkby ELG mocks, then fit a 12 component GMM to the resulting n(z) since this reproduced the n(z) very well.
 
 The procedure for generating the sample of ELGs with representative properties for DESI is as follows. We have GMM models for n(z) and the joint distribution of redshift, brightness, and shape. Draw N samples from the n(z) model. Draw 10k samples from the redshift, brigthness, shape model, filtering out points outside the redshift or detection limits. Organize the 10k samples in a KD Tree. For each of the N samples, find the nearest redshift in the 10k sample, and assign the corresponding brightness and shape. This becomes the sample we inject into the imaging data. It has the exact n(z) for DESI or eBOSS and reasonable brightnesses and shapes for each redshift. 42\% of the DESI sample is in the DESI TS box. Note, we repeated the above procedure using DR2 and DR3, respectively, instead of DR5 and ended up with similar Gaussian Mixture Models.
- 
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
-
-% The best way to enter references is to use BibTeX:
-
-\bibliographystyle{mnras}  %{mnras} if file is mnras.bst
-\bibliography{bib} % {bib} if file is bib.bib
-
-
-% Alternatively you could enter them by hand, like this:
-% This method is tedious and prone to error if you have lots of references
-%\begin{thebibliography}{99}
-%\bibitem[\protect\citeauthoryear{Author}{2012}]{Author2012}
-%Author A.~N., 2013, Journal of Improbable Astronomy, 1, 1
-%\bibitem[\protect\citeauthoryear{Others}{2013}]{Others2013}
-%Others S., 2012, Journal of Interesting Stuff, 17, 198
-%\end{thebibliography}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
-
-\appendix
 
 \section{Data Products}
 \label{sec:data-products}
