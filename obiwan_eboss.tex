@@ -303,13 +303,13 @@ The five images in Fig. \ref{fig:1000-words} show how Obiwan works. The process 
  \label{fig:examples-faint}
 \end{figure} 
 
-\subsection{Monte-Carlo}
+\subsection{Monte-Carlo Randoms}
 
 We add fake galaxies to the images at random locations, run \legacypipe, and repeat until there are many more simulated galaxies than real ones. The simulated galaxies that \legacypipe\, detects and models are the ``randoms" that a correlation function estimator would use. These randoms have been modified by the full covariance between all imaging systematics, those we expect such as stellar density and seeing, those previously unknown, and the biases and systematics inherit to the \legacypipe\, pipeline itself. 
 
 Our simulated galaxies must be a representative sample of real ELGs or else we cannot use them as randoms. The next section describes how we generate a representative sample by comparing \tractor\, catalogues from DR5 to  spectroscopically confirmed ELG galaxies from DEEP2.  
 
-\subsection{Injecting Realistic ELGs}
+\subsection{Randoms are Realistic ELGs}
 
 Section \ref{sec:input-sample}
 
@@ -319,7 +319,7 @@ This gives us a sample of ELGs with high confidence redshift (from DEEP2 spectra
 
 We model the redshift-brightness-shape parameter space with Gaussian Mixture Models (GMMs). DESI and eBOSS have different ELG target selection criteria so we create separate DESI and eBOSS samples. We then divide each of those into a \dev and Exponential galaxy sample, because we find that \dev, in all bands, are larger and one mag brighter than Exponential, on average. 
 
-\subsection{The Angular Correlation Function}
+\subsection{Determine Science Impact with the Angular Correlation Function}
 
 The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
 
@@ -334,6 +334,8 @@ Computing the correlation function reduces to counting all pairs of galaxies wit
 The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
 
 We add fake galaxies to the images at random locations, run {\tt{Tractor}}, and the fake galaxies recovered by the Tractor become the randoms. This is true if and only if the fake galaxies we inject are representative of the real ELG galaxies we are interested in for DESI science. These randoms have been modified by the full covariance between all imaging systematics. In principle, this includes systematics we didn't expect, not just stellar density, seeing, extinction, etc. as identified in previous studies.
+
+\subsection{Reveal Biases and Systematics in \legacypipe}
 
 \section{Results}
 
@@ -353,7 +355,7 @@ Future studies that want to use \obiwan\, randoms for computing correlation func
      \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
        \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
      }
-\caption{Fraction of injected galaxies recovered by \legacypipe. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}).}
+\caption{Fraction of injected galaxies recovered by \legacypipe. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}). ADD HEATMAP OF FRACTION OF FRACTION RECOVERED USING ANYMASK == 0}
 \label{fig:frac-recovered-eboss}
 \end{figure}
 
