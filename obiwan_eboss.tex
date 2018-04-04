@@ -335,7 +335,7 @@ We draw redshifts from n(z), dropping those outside the allowed redshift range [
 
 \subsection{Run \obiwan\, on the DECam CCDs used to Select ELG Targets for eBOSS}
 
-We will use \obiwan\, to inject simulated galaxies into the DECam CCDs\footnote{\url{http://portal.nersc.gov/project/desi/users/kburleigh/obiwan/legacysurveydir_ebossdr3}} used to produce the DR3 and DR3-plus \tractor\, catalogues, which the eBOSS Team used to select ELG Targets \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs and we will only inject galaxies inside the blue box. 
+We use \obiwan\, to inject simulated galaxies into the DECam CCDs\footnote{\url{http://portal.nersc.gov/project/desi/users/kburleigh/obiwan/legacysurveydir_ebossdr3}} that were used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs. We limit our \obiwan\, runs to the blue box. 
 
 \begin{figure}
      \subfloat[NGC\label{fig:ccds-ngc}]{%
@@ -349,9 +349,11 @@ We will use \obiwan\, to inject simulated galaxies into the DECam CCDs\footnote{
 \label{fig:ccds-eboss}
 \end{figure}
 
-We will use the current version of \legacypipe\,, not the two year old version that was actually used to create the DR3 \tractor\, catalogues; however, there is excellent agreement between DR3 and DR5 measurements of the same sources so using the current version will not bias our results. We will run \legacypipe\, with the \verb|--simp| option (this uses SIMP models instead of REX) and we force it to not drop any of the input CCDs (this ensures that we use the CCDs that eBOSS used for target selection).   
+We use the current version of \legacypipe\, and not the two year-old version that actually created the DR3-era \tractor catalogues. We do not expect this to bias our results because we find excellent agreement between DR3 and DR5 measurements for the same sources. We configure \obiwan\, to run \legacypipe\, with the \verb|--simp| option, which uses the SIMP model instead of REX, and to explicitly use all the input CCDs (used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets).   
 
 \subsection{Use the Angular Correlation Function to Gauge Scientific Impact}
+
+We will compute the angular correlation function, with and without \obiwan\, randoms, to gauge the scientific impact of \obiwan\, on eBOSS science. 
 
 The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
 
@@ -363,7 +365,7 @@ Computing the correlation function reduces to counting all pairs of galaxies wit
 
 \noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
 
-The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. In SDSS, a linear model was fit to each imaging systematic correlation and then used to up- or down-sample the number of galaxies depending on the value of the systematic(s) in the region of the image where the galaxies came from. We refer to this post-processing weighting procedure as the {\it{old method}}. We now describe our {\it{new method}} Monte Carlo simulation method, which does not require this weighting procedure. 
+The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. 
 
 \section{Results}
 
@@ -383,7 +385,7 @@ We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / 
 \label{fig:number-density-eboss}
 \end{figure}
 
-Fig. \ref{fig:input}(left column) shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. Right right column shows the distributions of injected $\rhalf$ and ellipticity components. e1, e2 are drawn from uniform distributions of position angles [0, 180) and minor to major axis ratios [0.2, 1.0]. 
+Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies before and after adding galactic extinction (left column), the distribution of injected $\rhalf$ (right top), and the distribution of ellipticity components e1, e2 (right middle). The injected galaxies are 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev (see Fig. \ref{fig:number-per-type}). This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.
 
 \begin{figure}
 \begin{tabular}{cc}
@@ -401,8 +403,6 @@ Fig. \ref{fig:input}(left column) shows the \gb, \rband, and \zb\, mag histogram
 \caption{(Left) \gb, \rband, \zb\, magnitude of injected sources (green) and after adding galactic extinction to them (blue). Extincted sources are fainter and the effect is stronger for bluer bands. (Right Top) $\rhalf$ of injected sources. The most common size is $\rhalf \sim 0.5$\arcsec. (Right Middle) Ellipticity components, e2 versus e1, of injected sources. These correspond to sampling from uniform distributions of position angles [0, 180) and minor to major axis ratios [0.2, 1.0].  
     \label{fig:input}}
 \end{figure}
-
-The injected galaxies are 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
@@ -448,22 +448,15 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
 
 \subsection{Use the Angular Correlation Function to Gauge Scientific Impact}
 
-To simplify terminology, we use {\it{uniform randoms}} to refer to random positions in the footprint, and {\it{obiwan randoms}} to refer to the subset of uniform randoms that are recovered by {\tt{Tractor}}. We wish to test our method over a large footprint, so we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint, and present the resulting angular correlation functions in Section \ref{sec:dr5}. We build on these results in Section \ref{sec:eboss}, presenting correlation functions from running \obiwan on the eBOSS NGC and SGC footprints, excluding eboss25.
+\red{INSERT HUI's WORK}
 
-\subsubsection{Weight Maps}
-
-Future studies that want to use \obiwan\, randoms for computing correlation functions can use the maps of fraction recovered (Fig. \ref{fig:frac-recovered-eboss}) as weights to up- and down-sample their randoms.
-
-\subsubsection{eBOSS NGC and SGC Analysis}
-\label{sec:eboss}
-
-INSERT HUI's WORK
+\obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
 
 \subsection{Biases and Systematics in \legacypipe}
+\label{sec:biases-systematics}
 
-This section introduces the types of things we can test with \obiwan. references the obiwan methods paper and section results biases and sys.
-
-Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? We answer all of these questions, but doing so requires lengthy discussion and many figures. In this section, we restrict ourselves to the questions with the highest impact for eBOSS science. All other biases and systematics in \legacypipe\, are presented in Section \ref{sec:biases-systematics}. Insights from both this section and Section \ref{sec:biases-systematics} are needed to properly analyze our \obiwan\, data set.
+We now present the most important biases and systematics that our \obiwan\, runs show exist in the \legacypipe\, pipeline. See Section \ref{a:biases-systematics} for more detail about these and additional biases and systematics. 
+%Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? 
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
@@ -680,7 +673,7 @@ We add a random RA and Dec coordinate, positions angle, minor to major axis rati
 \section{Biases and Systematics in \legacypipe}
 \label{a:biases-systematics}
 
-This section presents biases and systematics in \legacypipe\, that are not essential to eBOSS science but very important for properly analyzing our \obiwan\, data set.
+This section presents biases and systematics in \legacypipe\, that are not essential to eBOSS science but very important for properly analyzing our \obiwan\, eBOSS data set.
 
 \begin{figure}
      \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
@@ -723,6 +716,11 @@ Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources.
 \end{figure}
 
 %\section{The \obiwan DR5 Run}
+%
+%\subsection{Details of the DR5 Run}
+%
+%we ran \obiwan\, on about 500 deg$^2$ of the DR5\footnote{\url{http://legacysurvey.org/status/}} footprint
+%
 %
 %\subsection{Injecting Realistic ELGs for DESI}
 %
