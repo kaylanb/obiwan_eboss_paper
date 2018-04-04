@@ -371,21 +371,24 @@ We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / 
 \label{fig:number-density-eboss}
 \end{figure}
 
-Fig. \ref{fig:grz-hist} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. The distribution of position angles (pa), minor to major axis ratios (ba), and corresponding ellipticity components (e2, e1) are shown in Fig. \ref{fig:e1-e2}. 
+Fig. \ref{fig:input}(left column) shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies (blue), and the shift to fainter magnitudes (green) from adding galactic extinction. Right right column shows the distributions of injected $\rhalf$ and ellipticity components. e1, e2 are drawn from uniform distributions of position angles [0, 180) and minor to major axis ratios [0.2, 1.0]. 
 
 \begin{figure}
- \includegraphics[width=5 cm]{grz_hist_input_ext}
- \caption{\gb, \rband, \zb\, magnitude (top to bottom) of simulated galaxies with (green) and without (blue) galactic extinction. Extincted sources are fainter and the effect is stronger for bluer bands.}
- \label{fig:grz-hist}
+\begin{tabular}{cc}
+      \gb, \rband, \zb\, magnitude & $\rhalf$, e1, e2 \\
+      % list of figures goes left to right, then down a row, ...
+      \includegraphics[width=0.45\columnwidth]{grz_hist_input_ext_g} &
+      \includegraphics[width=0.45\columnwidth]{hist_true_rhalf_input}
+      \\
+      \includegraphics[width=0.45\columnwidth]{grz_hist_input_ext_r} &
+      \includegraphics[width=0.45\columnwidth]{e1_e2_input_1panel}
+      \\
+      \includegraphics[width=0.45\columnwidth]{grz_hist_input_ext_z} &
+      \\
+\end{tabular}
+\caption{(Left) \gb, \rband, \zb\, magnitude of injected sources (green) and after adding galactic extinction to them (blue). Extincted sources are fainter and the effect is stronger for bluer bands. (Right Top) $\rhalf$ of injected sources. The most common size is $\rhalf \sim 0.5$\arcsec. (Right Middle) Ellipticity components, e2 versus e1, of injected sources. These correspond to sampling from uniform distributions of position angles [0, 180) and minor to major axis ratios [0.2, 1.0].  
+    \label{fig:input}}
 \end{figure}
-
-\begin{figure}
- \includegraphics[width=\columnwidth]{e1_e2_input}
- \caption{(Left) Position angle (pa) versus minor to major axis ratio (ba) for simulated galaxies. (Right) The corresponding ellipticity components (e2, e1).}
- \label{fig:e1-e2}
-\end{figure}
-
-INSERT JUST THE rhalf INPUT PLOT HERE. IF TIME COMBINE INTO 6 PANELS WITH GRZ MAG DIST, PA,BA, e1,e2, AND RHALF INPUT. IN THAT CASE COULD DROP THE BA,PA BOX AND JUST SAW THIS IS e1,e2, DIST FOR UNIFORM BA,PA. THE NUMBER EXP, DEV BARPLOT CAN STAY BUT AS 6th PANEL COULD PUT IN BAR PLOT SHOWING PERCENTAGE INPUT OF EACH TYPE ON X-AXIS FOR SIMPLICITY
 
 The injected galaxies are 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.
 
@@ -715,7 +718,7 @@ Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources.
 
 \begin{figure}
  \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
- \caption{PDF of true $\rhalf$ for injected sources (top) compared to the true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (middle) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec. The most common recovered source size for all \tractor\, types, not just SIMP, is also $\rhalf \sim 0.5$\arcsec. PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. }
+ \caption{PDFs of true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (top) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec (Fig. \ref{fig:input}), and this is also the most common recovered source size independent of \tractor\, type (not just SIMP). PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. }
  \label{fig:rhalf-input}
 \end{figure}
 
