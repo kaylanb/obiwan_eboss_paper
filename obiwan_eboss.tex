@@ -670,7 +670,7 @@ We add a random RA and Dec coordinate, positions angle, minor to major axis rati
 \section{Biases and Systematics in \legacypipe}
 \label{a:biases-systematics}
 
-This section presents biases and systematics in \legacypipe\, that are not essential to eBOSS science but very important for properly analyzing our \obiwan\, eBOSS data set.
+This section identifies the bad sources and other biases and systematics that we remove from our \obiwan\, eBOSS data set to arrive at the figures presented in Section \ref{sec:biases-systematics}. Fig. \ref{fig:dflux-systematic} shows the number of standard deviations between true flux and \tractor\, measurement before bad sources at $x=0$ are removed or the mean is subtracted. The bad sources are cleanly removed with {\tt{fracin}} $< 0.2$ in the \tractor catalogues and are reported as ``not real'' by the Legacy Survey\footnote{\url{http://legacysurvey.org/dr6/files}}. 
 
 \begin{figure}
      \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
@@ -692,21 +692,15 @@ This section presents biases and systematics in \legacypipe\, that are not essen
 \label{fig:dflux-systematic}
 \end{figure}
 
+Fig. \ref{fig:safe-to-remove} shows that it is safe to remove the sources with {\tt{fracin}} $< 0.2$. Their \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions are nearly identical to that of {\tt{fracin}} $\ge 0.2$ sources. And this cut only removes about 11\% of the sample, independent of whether the source is truly exponential or \dev.
+
 \begin{figure}
  \includegraphics[width=0.8\columnwidth]{hist_all_quantities_fracin_cut}
  \caption{(Bottom right) Fraction of injected exponential and \dev\, galaxies that are recovered by \legacypipe\, (orange) or remain after \legacypipe\, recovery and the cut on fracin $< 0.2$. The fracin cut removes 11\% of the recovered exponential and 11\% of the recovered \dev\, galaxies. These are similar fractions so the fracin cut should not introduce any systematics.}
- \label{fig:}
+ \label{fig:safe-to-remove}
 \end{figure}
 
-Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources. We find that this is not a consequence of source size. Fig. \ref{fig:rhalf-input} shows the input distribution for $\rhalf$ (top) and how the distribution changes for sources classified as PSF, SIMP, EXP, and DEV. The true $\rhalf$ for type EXP and DEV are very similar. The size of the source does affect its chance of recovery by \legacypipe.
-
-Fig. \ref{fig:rhalf-recovered} shows that for $\rhalf > 1.5$\arcsec the chance of recovery drops to and fluctuates about 50\%.
-
-\begin{figure}
- \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
- \caption{How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery drops to and fluctuates about 50\%.}
- \label{fig:rhalf-recovered}
-\end{figure}
+Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources. We find that this is not a consequence of source size. Fig. \ref{fig:rhalf-recovered} shows the distribution of $\rhalf$ for sources classified as PSF, SIMP, EXP, and DEV. Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources, but since true $\rhalf$ distributions for type EXP and DEV are so similar, it is unlikely that the bias is due to source size. In fact, Fig. \ref{fig:rhalf-recovered} shows that for $\rhalf > 1.5$\arcsec the chance of recovery by \legacypipe\, drops to and fluctuates about 50\%. And this is independent of whether classifies the source as EXP or DEV.
 
 \begin{figure}
  \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
@@ -715,10 +709,16 @@ Fig. \ref{fig:rhalf-recovered} shows that for $\rhalf > 1.5$\arcsec the chance o
 \end{figure}
 
 \begin{figure}
- \includegraphics[width=\columnwidth]{grz_hist_by_type}
- \caption{PDFs of true \gb, \rband, \zb magnitude for type EXP, DEV, PSF, and SIMP sources (blue, green, cyan, and magenta, respectively). (Left) EXP and DEV sources with SIMP for comparison. EXP and DEV have nearly identical PDFs, in all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) PSF and SIMP with EXP for comparison. In \rband\, and \zb, the EXP, SIMP, and PDFs have similar shape but PSF is located about 0.25 mag fainter than SIMP and SIMP is located about 0.25 mag fainter than EXP.}
- \label{fig:grz-hist-type}
+ \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
+ \caption{How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery drops to and fluctuates about 50\%.}
+ \label{fig:rhalf-recovered}
 \end{figure}
+
+%\begin{figure}
+% \includegraphics[width=\columnwidth]{grz_hist_by_type}
+% \caption{PDFs of true \gb, \rband, \zb magnitude for type EXP, DEV, PSF, and SIMP sources (blue, green, cyan, and magenta, respectively). (Left) EXP and DEV sources with SIMP for comparison. EXP and DEV have nearly identical PDFs, in all bands. The PDFs for EXP and DEV drop to zero for faint sources, and this drop coincides with an increase in the SIMP PDF for faint sources. (Right) PSF and SIMP with EXP for comparison. In \rband\, and \zb, the EXP, SIMP, and PDFs have similar shape but PSF is located about 0.25 mag fainter than SIMP and SIMP is located about 0.25 mag fainter than EXP.}
+% \label{fig:grz-hist-type}
+%\end{figure}
 
 %\section{The \obiwan DR5 Run}
 %
