@@ -262,7 +262,7 @@ $^{8}$CEA, Centre de Saclay, IRFU/SPP, F-91191 Gif-sur-Yvette, France \\
 
 \red{ADD TEXT}
 \begin{itemize}
-\item We present the first application of \obiwan, a new method for removing imaging systematics from the DECaLS data (Burleigh \& Moustakas 2018, in prep), to remove these systematics from angular correlation functions.
+\item We present the first application of \obiwan, a new method for removing imaging systematics from the DECaLS data \citep{obiwanMethods} to remove these systematics from angular correlation functions.
 \item Our goal is to measure the angular correlation function for eBOSS ELGs. This is a crucial test of how well \obiwan\, can improve BAO measurements. The DESI analysis will be more complicated than eBOSS, so this is a necessary step towards a proper scientific analysis for DESI.
 \item We perform a trial run on X deg$^2$ of the DR5 footprint, and then run \obiwan\, on the actual eBOSS footprint.
 \item We estimate the impact of \obiwan\, on the angular correlation function
@@ -281,42 +281,24 @@ methods: observational
 
 \section{Introduction}
 
-Removing imaging systematics is critical for measuring unbiased clustering statistics, such as the angular correlation function. This has primarily been done for the SDSS, WiggleZ, \red{others?} using map-based methods. Starting from a large scale structure (LSS) catalogue containing selected galaxy positions and properties, the sky is subdivided into equal-area pixels using a pixelization scheme such as \healpix\, \citep{healpix}. The number of galaxies and statistics (usually the average) for imaging meta-data (e.g. seeing, sky brightness, exposure time, etc.) and foregrounds (e.g. galactic extinction) are computed per-pixel. Statistics having sufficiently large cross correlation with the number of galaxies are removed by the given method \red{is this template subtraction only or also true to model projection?}. The defining feature of map-based methods is the construction of a weight map, which mimics how the angular selection function up- or down-samples the true distribution of galaxies to yield the observed LSS catalogue.
+How galaxies cluster at different times in the past is directly related to the expansion rate of the universe and other fundamental questions in cosmology \citep{peebles1980}. Astronomers perform galaxy surveys to collect large samples of galaxies from which the degree of clustering can be measured using various statistical methods. For instance, the Automatic Plate Measuring Galaxy Survey (APM) \citep{apmSurvey}, Sloan Digital Sky Survey (SDSS) \citep{sdssYork}, WiggleZ Dark Energy Survey (WiggleZ) \citep{wigglezSurvey}, Baryon Oscillation Spectroscopic Survey (BOSS) \citep{bossSurvey}, and Extended Baryon Oscillation Spectroscopic Survey (eBOSS) \citep{ebossSurvey}. One of the primary methods is the three dimensional correlation function projected onto the sphere (the angular correlation function). Images of the night sky are transformed into a large scale structure (LSS) catalogue by passing them through a pipeline that automatically detects and models galaxies and stars in the calibrated images. Galaxies of a specific type and age are selected from the LSS catalogue and the angular correlation function is computed from their positions on the sky. Removing biases and systematics due to the imaging data (imaging systematics) is critical for measuring unbiased clustering statistics like the angular correlation function. This has been successfully done in the SDSS, WiggleZ, BOSS, and eBOSS surveys using map-based methods; however, it is unlikely that these methods, in their current state, will be able to handle the complexities of future and ongoing galaxy surveys, such as the Legacy Survey.
+
+Map-based methods use a pixelization scheme, such as \healpix\, \citep{healpix}, to subdivide the sky into equal-area pixels and then compute various per-pixel quantities: the number of galaxies in the LSS catalogue (data), the average seeing, sky brightness, exposure time, etc. (imaging meta-data) and galactic extinction (foregrounds). The non-data maps are potential imaging systematics and are turned into pixel weight maps (in configuration space) or mode weights (in Fourier space). The weights mimic how the angular selection function samples the true distribution of galaxies yielding the observed LSS catalogue \citep{biasInTemplateMethod}.
 % the weights can be chained together by multiplying the weights for all systematics or can be fit to all systematics simultaneously
 
-The two most popular map-based methods are template subtraction \citep{sdss1Systematics, myers06, sdss8Systematics, sdss8Companion, sdss9Systematics, sdss12Systematics, wigglezSelectionFunc, delubacSystematics, qsoDepthExtinction, prakashRegressionTech, myersRegressionTech, elvinpoole} and model projection \citep{rybicki92, tegmark98, uros04, biasInTemplateMethod, leistedt13}. Template subtraction (aka regression or best-fit simple models) predicts the per-pixel galaxy counts from the feature vector of imaging meta-data and foregrounds in that pixel, while mode projection does X \citep{biasInTemplateMethod}.
+The two most popular map-based methods are ``template subtraction" \citep{sdss1Systematics, myers06, sdss8Systematics, sdss8Companion, sdss9Systematics, sdss12Systematics, wigglezSelectionFunc, delubacSystematics, qsoDepthExtinction, prakashRegressionTech, myersRegressionTech, elvinpoole} and ``model projection" \citep{rybicki92, tegmark98, uros04, biasInTemplateMethod, leistedt13}. Template subtraction models how the number of galaxies depends on each systematic and subtracts the model from each mode of the data (in Fourier space) or divides by the model (in pixel space). \red{Say some stuff about overfitting}. To prevent overfitting, only the systematics maps with the largest cross correlations with the data are modeled. Mode projection treats the systematic maps as adding noise to each mode in Fourier space or pixels in configuration space, so that values in the data covariance matrix are increased for modes where each systematic map is large. It robustly models the impact of the linear combination of the systematics, but does not include non-linear effects from the systematics. 
 % biasInTemplateMethod for why template subtraction method overfits
 % leistedt13 is best overview for the mode projection method
+% they both do "mode projection" because the pixelized maps are a summation of basis functions (usually spherical harmonics) in Fourier space. The observed datas is the superpostion of cosmological signal modes and systematics modes. Computing a correlation function or power spectrum in Fourier space ``projects" the data onto the basis function's modes. The template subtraction method builds a model for each systematic and subtracts the model in Fourier space (or divides by it in configuration space), while the mode projection method increases the covariance matrix of the data at modes where each systematic is strongest.
 
-Both methods do the following: each discrete (pixelized) map is described as a summation of basis functions (usually spherical harmonics). Computing a correlation function or power spectrum in Fourier space ``projects" the data onto the basis function's modes. The data is the superposition of modes from systematic maps and the underlying cosmological signal. The ``template subtraction" method models each systematic map and subtracts it from each mode in Fourier space or up- and down-weights the pixel values in configuration space. The ``mode projection" method treats the systematic maps as adding noise to each mode in Fourier space or pixels in configuration space, so that values in the data covariance matrix are increased for modes where each systematic map is large. The mode project method robustly models the impact of the linear combination of the systematics. It does not include non-linear affects from the systematics. Neither method corrects for systematics that are not known apriori.
-
-Drawbacks of the map-based methods include the following. A substantial fraction of the data ($10-20$\% \citep{elvinpoole}, \red{others?}) is removed because it contains bright stars, bad seeing, etc. and the number of galaxies deviate significantly from the mean. The software to create a LSS catalogue is complex and can introduce algorithmic biases and systematics into the LSS catalogue. Future and ongoing galaxy surveys, such as the Legacy Surveys, will select galaxies from a join analysis of images from multiple telescopes, multi- and same-band dithers will be separated by month to year time baselines, and the CCD detectors are large and will have similar angular size (about 1 deg) to the cosmological signal of interest (e.g. the BAO signal is X deg at a redshift of X). It is unclear whether map-based methods are capable of removing imaging systematics, especially due to the latter, at a level sufficient for a Stage-IV dark energy science. 
+These map-based methods are ill suited for the next generation of galaxy surveys, such as the Legacy Surveys \citep{overviewPaper}. A substantial fraction of the data ($10-20$\%) is removed because it contains bright stars, bad seeing, etc. and the number of galaxies deviate significantly from the mean. Only systematics that are known apriori are corrected for and it is unclear how to make a single systematic map for repeat imaging of the same region. For example, \cite{elvinpoole} threw out about 20\% of the imaging data and needed more than 19 systematic maps for DECam imaging data. Any biases or systematics introduced by the pipeline that created the LSS catalogue are ignored. LSS catalogues from the Legacy Surveys come from a joint analysis of images from multiple telescopes and multi- and same-band repeat imaging is separated by month to year time baselines. The CCD detectors also have similar angular size (about 1 deg) to the cosmological signal of interest (the BAO signal is X deg at a redshift of X). 
+%It is unclear whether map-based methods are capable of removing imaging systematics, especially due to the latter, at a level sufficient for a Stage-IV dark energy science. 
 %The complexities of the Legacy Surveys have already revealed shortcomings in the current method for removing imaging systematics. 
-For example, \cite{elvinpoole} needed more than 19 maps to remove systematics from DECam data.
 
-The Extended Baryon Oscillation Spectroscopic Survey (eBOSS) \red{cite} targetted emission line galaxies (ELGs) using DECaLS data and obtained spectra for them. The Dark Energy Spectroscopic Instrument (DESI) \red{cite} will obtain spectra for about 30M galaxies and all targets will come from DECaLS, MzLS, BASS, and WISE images. 
-
-\obiwan\, operates on the \legacypipe/\tractor pipeline, so our goal is to use the angular correlation function for eBOSS ELGs to estimate the impact of \obiwan\, on the primary science objectives of eBOSS. This is also a preparatory step towards future analysis of the DESI ELG sample, since DESI is significantly more complicated than eBOSS. All data products are available at NERSC (see Section \ref{sec:data-products}).
-
-We present a new method for removing imaging systematics from Legacy Survey data that does not require a weight map, does not assume apriori knowledge of the systematics of interest, and that removes biases and systematics in the software pipeline that produced the LSS catalogue. We use the \obiwan\, code  (Burleigh \& Moustakas 2018, in prep) to perform Monte-Carlo simulations of injecting simulated ELG galaxies into the DECam images used for eBOSS ELG target selection \citep{anand17} and forward-modeling the the simulated sources with the \tractor. \obiwan\, is a non-parametric method that corrects for the full covariance of imaging systematics. This is a crucial test of the impact of \obiwan\, on future BAO measurements.
-
-For eBOSS this is the only way to model the anymask == 0 cut.
-
-Useful references \cite{peebles1980, apmSurvey}
-
-The angular correlation function ($\xi(r)$) is X. Assuming a power law for $\xi(r)$,
-\begin{align}
-\xi = \lp\frac{r}{r_0}\rp^{-\gamma}, 
-\end{align}
-where $r_0$ is the characteristic separation between galaxies, and the small angle ($\theta \ll 1 \text{rad} \approx 60 \text{deg}$) limit, the angular correlation function is also a power law \citep{peebles1980}, 
-\begin{align}
-w = \theta^{1-\gamma}. 
-\end{align}
-For ELGs, $\gamma \approx 1.6$ and $r_0 \approx 4$ Mpc h$^{-1}$ \red{cite}
-%1.7-1.8 for galaxies (conolloy 2002)
-%ELG gamma=1.6, r0=4 (Ellie)
-%LRG gamma= 1.8, r0=10 (Ellie)
-%QSOs gamm= 1.6, r0=6 (Ellie)
+We present a new method for removing imaging systematics from Legacy Survey data, using the \obiwan\, code \citep{obiwanMethods}, that does not require a weight map, does not assume apriori knowledge of the systematics of interest, and that removes biases and systematics in the software pipeline that produced the LSS catalogue. 
+% \obiwan\, is a non-parametric method that corrects for the full covariance of imaging systematics.
+We inject realistic emission line galaxies (ELGs) into the DECam images used to create for DR3-era \tractor\, catalogues, which the eBOSS Team used to select ELG targets \citep{anand17}. We use \obiwan\, to perform Monte-Carlo simulations of how the \legacypipe/\tractor\, pipeline detects and forward-models eBOSS ELG-like galaxies. Our goal is compute the angular correlation function for eBOSS ELGs with and without \obiwan, to estimate the impact of this method on eBOSS science requirements. This is also a preparatory step towards future analysis of the Dark Energy Spectroscopic Instrument (DESI) ELG sample, because DESI will select targets using Legacy Surveys data and its five-year survey is significantly more complicated than eBOSS \citep{desiScience, desiInstrument}.  All data products are available at NERSC (see Section \ref{sec:data-products}).
+%will obtain spectra for about 30M galaxies and all targets will come from the Legacy Surveys 
 
 %The model for each systematic predicts how much to up- or down-sample the number of galaxies in a given part of the sky. This method assumes apriori knowledge of the potential imaging systematics and that they are independent of one other. 
 %These assumptions will likely break down in the next generation of galaxy surveys, such as the Legacy Surveys (aka DECaLS, MzLS, and BASS) \red{CITE OVERVIEW PAPER}. 
@@ -326,7 +308,7 @@ For ELGs, $\gamma \approx 1.6$ and $r_0 \approx 4$ Mpc h$^{-1}$ \red{cite}
 
 \subsection{\obiwan}
 
-\obiwan\, modifies the \gb, \rband, \zb\, images that \legacypipe\, operates on by adding simulated sources to the individual exposures and appropriately modifying the inverse variance images. The simulated sources include poisson noise from the source itself. The power of \obiwan\, is that the injected sources inherit the sky background, systematics, or whatever else is present in the data, so nothing more than the simulated galaxy or star of interest is injected. \legacypipe\, does not know the images have been modified and source detection, model fitting, and model selection proceed as usual. For more details see Burleigh \& Moustakas 2018, in prep. 
+\obiwan\, modifies the \gb, \rband, \zb\, images that \legacypipe\, operates on by adding simulated sources to the individual exposures and appropriately modifying the inverse variance images. The simulated sources include poisson noise from the source itself. The power of \obiwan\, is that the injected sources inherit the sky background, systematics, or whatever else is present in the data, so nothing more than the simulated galaxy or star of interest is injected. \legacypipe\, does not know the images have been modified and source detection, model fitting, and model selection proceed as usual. For more details see \cite{obiwanMethods}. 
 
 Fig. \ref{fig:1000-words} shows a 200x200 pixel DECam \gb, \rband, \zb\, coadded image (top left), the coadd of the four simulated galaxies that will be added (top middle), and the image coadd after adding the four galaxies to each exposure (top right). The model and residual coadd images are the bottom panels. Two of the simulated galaxies (the more compact ones) have \dev\, profiles, while the other two have exponential profiles. Fig. \ref{fig:examples-bright} show examples of relatively bright real and simulated ELG-like galaxies with similar \gb \, magnitude.
 
@@ -392,6 +374,20 @@ We use the current version of \legacypipe\, and not the two year-old version tha
 \subsection{Using the Angular Correlation Function to Gauge Scientific Impact}
 
 We will compute the angular correlation function, with and without \obiwan\, randoms, to gauge the scientific impact of \obiwan\, on eBOSS science. 
+
+The angular correlation function ($\xi(r)$) is X. Assuming a power law for $\xi(r)$,
+\begin{align}
+\xi = \lp\frac{r}{r_0}\rp^{-\gamma}, 
+\end{align}
+where $r_0$ is the characteristic separation between galaxies, and the small angle ($\theta \ll 1 \text{rad} \approx 60 \text{deg}$) limit, the angular correlation function is also a power law \citep{peebles1980}, 
+\begin{align}
+w = \theta^{1-\gamma}. 
+\end{align}
+For ELGs, $\gamma \approx 1.6$ and $r_0 \approx 4$ Mpc h$^{-1}$ \red{cite}
+%1.7-1.8 for galaxies (conolloy 2002)
+%ELG gamma=1.6, r0=4 (Ellie)
+%LRG gamma= 1.8, r0=10 (Ellie)
+%QSOs gamm= 1.6, r0=6 (Ellie)
 
 The two point correlation function, applied to galaxy survey data, says whether the galaxies are clustered or under-dense, relative to a random distribution, at different length scales (i.e. separations between pairs of galaxies). The 2D (angular) correlation function is computed by measuring the positions of galaxies in images of the night sky. The 3D correction function combines the 2D information with the distance to each galaxy from Earth (e.g. measured from a spectrum).
 
@@ -490,15 +486,19 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
 
 \obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
 
+\subsection{The eBOSS ``anymask'' cut}
+
+\red{Make a fraction recovered map after applying the anymask cut and show an angular correlation function with and without anymask}
+
 \subsection{Biases and Systematics in \legacypipe}
 \label{sec:biases-systematics}
 
-We now present high impact biases and systematics that we find in \legacypipe\, using our \obiwan\, eBOSS runs. See Section \ref{a:biases-systematics} for more detail. Fig. \ref{fig:confusion} shows that \tractor\, is biased towards EXP sources. About 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally (Burleigh \& Moustakas et al. 2018).
+We now present high impact biases and systematics that we find in \legacypipe\, using our \obiwan\, eBOSS runs. See Section \ref{a:biases-systematics} for more detail. Fig. \ref{fig:confusion} shows that \tractor\, is biased towards EXP sources. About 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally \citep{obiwanMethods}.
 %Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? 
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{confusion_matrix_by_type}
- \caption{Confusion matrix showing the fraction of truly exponential or \dev\, sources that \tractor\, models as type PSF, SIMP, EXP, DEV, or COMP sources. \tractor\, is biased towards EXP sources because 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. The other 80\% of truly \dev\, sources are classified as SIMP (50\%), EXP (20\%), and PSF (10\%). This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally (Burleigh \& Moustakas et al. 2018).}
+ \caption{Confusion matrix showing the fraction of truly exponential or \dev\, sources that \tractor\, models as type PSF, SIMP, EXP, DEV, or COMP sources. \tractor\, is biased towards EXP sources because 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. The other 80\% of truly \dev\, sources are classified as SIMP (50\%), EXP (20\%), and PSF (10\%). This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally \citep{obiwanMethods}.}
  \label{fig:confusion}
 \end{figure}
 
@@ -661,7 +661,7 @@ We find that the DR3-DEEP2 sample reproduces the brightness, shape, and redshift
  \label{fig:dr3dp2-redshift}
 \end{figure}
 
-Because DR3-DEEP2 galaxies are representative of eBOSS ELGs and extend beyond the eBOSS selection boundaries, we can construct a sample of ELG-like galaxies to test contamination into the eBOSS selected sample. We choose to keep DR3-DEEP2 SGC galaxies within a padding of 0.2 mag of the eBOSSS selection boundaries, yielding a sample of 1,064 EXP and 85 DEV galaxies. Burleigh \& Moustakas 2018, in prep show that \tractor\, flux measurements are accurate to 0.1 - 0.2 mag for \gb $\sim 22.9$ galaxies, so a padding of 0.2 mag should capture most contaminants due to \tractor\, measurement errors. Fig. \ref{fig:dr3dp2-vs-eboss} compares our eBOSS and DR3-DEEP2 samples for EXP and DEV galaxies.
+Because DR3-DEEP2 galaxies are representative of eBOSS ELGs and extend beyond the eBOSS selection boundaries, we can construct a sample of ELG-like galaxies to test contamination into the eBOSS selected sample. We choose to keep DR3-DEEP2 SGC galaxies within a padding of 0.2 mag of the eBOSSS selection boundaries, yielding a sample of 1,064 EXP and 85 DEV galaxies. \cite{obiwanMethods} show that \tractor\, flux measurements are accurate to 0.1 - 0.2 mag for \gb $\sim 22.9$ galaxies, so a padding of 0.2 mag should capture most contaminants due to \tractor\, measurement errors. Fig. \ref{fig:dr3dp2-vs-eboss} compares our eBOSS and DR3-DEEP2 samples for EXP and DEV galaxies.
 
 \begin{figure}
      \subfloat[type EXP\label{fig:dr3dp2-vs-eboss-exp}]{%
