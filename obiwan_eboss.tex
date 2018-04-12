@@ -190,6 +190,8 @@
 \newcommand{\gb}{$g$}
 \newcommand{\rband}{$r$}
 \newcommand{\zb}{$z$}
+\newcommand{\grcolor}{$g - r$}
+\newcommand{\rzcolor}{$r - z$}
 
 \newcommand{\tractor}{{\tt Tractor}}
 \newcommand{\legacypipe}{{\tt Legacypipe}}
@@ -303,7 +305,42 @@ We present a new method for removing imaging systematics from future and ongoing
 %These assumptions will likely break down in the next generation of galaxy surveys, such as the Legacy Surveys (aka DECaLS, MzLS, and BASS) \red{CITE OVERVIEW PAPER}. 
 %The Legacy Surveys take images with three telescopes and leverage existing imaging from Wide-field Infrared Survey Explorer (WISE) \red{cite} to detect galaxies. 
 
+This paper is structured as follows. In \S\,\ref{sec:data}, we describe the imaging and spectroscopic data we use and the eBOSS ELG target selection criteria. In \S\,\ref{sec:methods}, we summarize how \obiwan\, and \tractor\, work, the algorithms we use for removing imaging systematics, and the angular correlation function is estimated from a LSS catalogue. In \S\,\ref{sec:results}, we present our \obiwan\, Monte-Carlo simulations of the same imaging data used to select eBOSS ELGs, and the resulting angular correlation functions. We conclude in \S\,\ref{sec:conclusions}. The Appendix provides the additional details about our \obiwan\, Monte-Carlo simulations needed to reproduce our results, but that do not belong in the main text.
+
+\section{Data}
+\label{sec:data}
+
+\subsection{The DECam Legacy Survey (DECaLS)}
+
+The DECaLS is a \gb, \rband, \zb-band survey of 9,000 deg$^2$ of the southern sky using the Blanco 4-m telescope and DECam camera\footnote{\url{http://www.ctio.noao.edu/noao/content/DECam-Observing-Manual}} in Cerro Tololo, Chile. DECam has a field of view of 3.18 deg$^2$ and is a mosaic of 62 CCDs, each having 4096x2046 pixels, with pixel scale of 0.262\arcsec pixel$^{-1}$. The DECaLS depth requirements are 1-2 mag deeper than the SDSS. For more details see \cite{overviewPaper, strategyPaper}.
+
+The first round of eBOSS ELG target selection \citep{anand17} used a combination of DR3\footnote{\url{http://legacysurvey.org/dr3}} \tractor\, catalogues and a set of reprocessed DR3 \tractor\, catalogues (produced by the eBOSS team) that included DECam images observed after the DR3 March 2016 cutoff.  We will refer to these as the DR3-plus catalogues. The list of DECam CCDs used to create the DR3-plus catalogues is available online\footnote{\url{http://portal.nersc.gov/project/desi/users/kburleigh/obiwan/legacysurveydir_ebossdr3}}. Fig. \ref{fig:ccds-eboss} shows these CCDs and the approximate eBOSS NGC and SGC regions (blue boxes). 
+
+\begin{figure}
+     \subfloat[NGC\label{fig:ccds-ngc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_ngc}
+     }
+     \hfill
+     \subfloat[SGC\label{fig:ccds-sgc}]{%
+       \includegraphics[width=\columnwidth]{ccdsused_eboss_sgc}
+     }
+\caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs used to create the DR3-plus \tractor\, catalogues.}
+\label{fig:ccds-eboss}
+\end{figure}
+
+\subsection{eBOSS ELG Targets}
+
+eBOSS ELG targets have clean DECaLS photometry, are separated from bright stars/objects based on  bright star masks, have sufficient \gb-flux to be [O II] emitters and star forming galaxies, and have \grcolor\, and \rzcolor\, color associated with galaxies in the desired redshift range of 0.5 - 2 \citep{anand17}. The imaging footprint is split into two regions (the blue boxes in Fig. \ref{fig:ccds-eboss}), about 620 deg$^2$ in the South Galactic Cap (SGC) and 600 deg$^2$ in the North Galactic Cap (NGC). ELGs in the SGC are selected using the following criteria,
+
+\noindent The NGC criteria is the same except for,
+
+
+It was later discovered that \verb|decam_anymask[grz] = 0| is magnitude dependent \red{also redshift biased?} and is removes many good ELG candidates. \verb|decam_allmask[grz] = 0| should have been used instead. Identifying and removing the biases and systematics introduced \verb|decam_anymask[grz] = 0| has proven difficult; fortunately, our \obiwan\, Monte-Carlo simulations will resolve this problem because they provide a set of randoms with and without the \verb|decam_anymask[grz] = 0| cut applied. 
+
+\subsection{DEEP2}
+
 \section{Methods}
+\label{sec:methods}
 
 \subsection{\obiwan}
 
@@ -331,6 +368,10 @@ Fig. \ref{fig:1000-words} shows how \obiwan\, works. a 200x200 pixel DECam \gb, 
 
 \obiwan\, performs a Monte-Carlo Simulation by injecting the simulated galaxies at random RA and Dec, running \legacypipe, and repeating for the same images. In large scale structure terminology, the randoms that would be used in a correlation function analysis are the injected galaxies that \legacypipe\, detects, models, and measures properties for that pass some target selection criteria. The initially random RA and Dec centroids have been modified by the same survey geometry, source detection, measurement, and target selection process that modified the real galaxy targets in the images. Unlike the methods that rely on backward-modeling of apriori imaging systematics, these {\it{obiwan randoms}} have already modified by the full covariance between {\it{all}} imaging systematics, those we expected apriori but also those not expected or unknown. The obiwan randoms are also modified by any biases and systematics in the \legacypipe\, pipeline which are of course in the real galaxy sample as well. 
 
+\subsection{\tractor}
+
+\red{insert few sentences about tractor and its stages.} For more details see \cite{obiwanMethods, tractorPaper}.
+
 \subsection{Injecting Realistic ELGs}
 
 This section summarizes how we generate the representative sample of eBOSS ELG-like galaxies that we inject into the images. A representative sample is crucial to the success of our method because we can only use the randoms if they truly mimic the properties of the real galaxies we are interested in. 
@@ -354,21 +395,7 @@ We draw redshifts from n(z), dropping those outside the allowed redshift range [
 
 \subsection{Run \obiwan\, on the DECam CCDs used to Select ELG Targets for eBOSS}
 
-We use \obiwan\, to inject simulated galaxies into the DECam CCDs\footnote{\url{http://portal.nersc.gov/project/desi/users/kburleigh/obiwan/legacysurveydir_ebossdr3}} that were used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets \citep{anand17}. Fig. \ref{fig:ccds-eboss} shows these CCDs. We limit our \obiwan\, runs to the blue box. 
-
-\begin{figure}
-     \subfloat[NGC\label{fig:ccds-ngc}]{%
-       \includegraphics[width=\columnwidth]{ccdsused_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:ccds-sgc}]{%
-       \includegraphics[width=\columnwidth]{ccdsused_eboss_sgc}
-     }
-\caption{The eBOSS NGC and SGC footprints (blue boxes) and the DECaLS CCDs from the \tractor\, catalogues that used to select ELG targets.}
-\label{fig:ccds-eboss}
-\end{figure}
-
-We use the current version of \legacypipe\, and not the two year-old version that actually created the DR3-era \tractor catalogues. We do not expect this to bias our results because we find excellent agreement between DR3 and DR5 measurements for the same sources. We configure \obiwan\, to run \legacypipe\, with the \verb|--simp| option, which uses the SIMP model instead of REX, and to explicitly use all the input CCDs (used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets).   
+We use \obiwan\, to inject simulated galaxies into the DECam CCDs used to create the DR3-plus \tractor\, catalogues. We use the current version of \legacypipe\, and not the two year-old version that actually created the DR3-era \tractor catalogues. We do not expect this to bias our results because we find excellent agreement between DR3 and DR5 measurements for the same sources. We configure \obiwan\, to run \legacypipe\, with the \verb|--simp| option, which uses the SIMP model instead of REX, and to explicitly use all the input CCDs (used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets).   
 
 \subsection{Using the Angular Correlation Function to Gauge Scientific Impact}
 
@@ -401,6 +428,7 @@ Computing the correlation function reduces to counting all pairs of galaxies wit
 The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. 
 
 \section{Results}
+\label{sec:results}
 
 \subsection{Run \obiwan\, on the DECam CCDs used to Select ELG Targets for eBOSS}
 
@@ -559,6 +587,7 @@ We say \legacypipe\, recovers a injected source when there is exactly one \tract
 
 
 \section{Conclusions}
+\label{sec:conclusions}
 
 \red{ADD TEXT}
 %\begin{itemize}
@@ -567,6 +596,7 @@ We say \legacypipe\, recovers a injected source when there is exactly one \tract
 
 
 \section*{Acknowledgements} 
+\label{sec:ack}
  
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
