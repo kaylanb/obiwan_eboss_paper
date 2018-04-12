@@ -328,16 +328,47 @@ The first round of eBOSS ELG target selection \citep{anand17} used a combination
 \label{fig:ccds-eboss}
 \end{figure}
 
-\subsection{eBOSS ELG Targets}
+\subsection{eBOSS ELG Target Selection}
 
-eBOSS ELG targets have clean DECaLS photometry, are separated from bright stars/objects based on  bright star masks, have sufficient \gb-flux to be [O II] emitters and star forming galaxies, and have \grcolor\, and \rzcolor\, color associated with galaxies in the desired redshift range of 0.5 - 2 \citep{anand17}. The imaging footprint is split into two regions (the blue boxes in Fig. \ref{fig:ccds-eboss}), about 620 deg$^2$ in the South Galactic Cap (SGC) and 600 deg$^2$ in the North Galactic Cap (NGC). ELGs in the SGC are selected using the following criteria,
+eBOSS selected ELGs from DR3-plus \tractor\, catalogues having clean DECaLS photometry, locations outside bright star masks, sufficient \gb-flux to be [O II] emitters and star forming galaxies, and \grcolor\, and \rzcolor\, color associated with galaxies in the desired redshift range of 0.5 - 2. The eBOSS ELG footprint is split into the two regions (blue boxes) shown in Fig. \ref{fig:ccds-eboss}. The regions include 620 deg$^2$ in the South Galactic Cap (SGC) and 600 deg$^2$ in the North Galactic Cap (NGC). ELGs in the SGC are selected using by the following \tractor\, catalogue cuts,
 
-\noindent The NGC criteria is the same except for,
+\begin{itemize}
+\item \verb|brick_primary|
+\item not in bright star masks
+\item \verb|decam_anymask[grz] = 0|
+\item $21.825 < g < 22.825$
+\item $-0.068\, (r-z) + 0.457 < g-r < 0.112\, (r-z) + 0.773$
+\item $0.218\, (g-r) + 0.571 < r-z < -0.555\, (g-r) + 1.901$
+\end{itemize}
 
+\noindent The NGC cuts are identical except for,
+
+\begin{itemize}
+\item $21.825 < g < 22.9$
+\item $0.637\, (g-r) + 0.399 < r-z$
+\end{itemize}
+
+\noindent For more details see \cite{anand17}.
 
 It was later discovered that \verb|decam_anymask[grz] = 0| is magnitude dependent \red{also redshift biased?} and is removes many good ELG candidates. \verb|decam_allmask[grz] = 0| should have been used instead. Identifying and removing the biases and systematics introduced \verb|decam_anymask[grz] = 0| has proven difficult; fortunately, our \obiwan\, Monte-Carlo simulations will resolve this problem because they provide a set of randoms with and without the \verb|decam_anymask[grz] = 0| cut applied. 
 
-\subsection{DEEP2}
+\subsection{Joint Tables of eBOSS Spectra and \tractor\, Catalogue Measurements}
+
+To build a representative sample of eBOSS ELG galaxies (see \S\, \ref{sec:injecting-elgs}), we use the following joint tables of eBOSS 21, 22, 23 spectra and associated DR3-plus \tractor\, catalogue measurements,
+
+\begin{itemize}
+\item \verb|eBOSS.ELG.obiwan.eboss21.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss2122.v5_10_7.fits| 
+\item \verb|eBOSS.ELG.obiwan.eboss22.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_4.fits|
+\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_7.fits|
+\end{itemize}
+
+\noindent We will refer to these as the eBOSS-\tractor\, tables. 
+
+\subsection{The DEEP2 Galaxy Redshift Survey (DEEP2)}
+
+DEEP2 obtained about 50,000 high resolution (R $\sim 6000$) spectra of redshift $\sim 1$ galaxies using the DEIMOS multi-object on Keck 2 \citep{deep2}. The DEEP2 footprint is 2.8 deg$^2$, split into four disjoint regions: Field 1 (14hr), Field 2 (16h), Field 3 (23h), and Field 4 (02h). We create a DEEP2 (DR4) and DECaLS DR3 matched table by finding the nearest DR3 \tractor\, catalogue source within a 1\arcsec search radius of each DEEP2 spectrum. The DECaLS DR3 footprint does not overlap Field 1, so our table only includes Fields 2-4. We refer to it as the DR3-DEEP2 table and use it in \S\, \ref{sec:injecting-elgs}.
 
 \section{Methods}
 \label{sec:methods}
@@ -373,21 +404,13 @@ Fig. \ref{fig:1000-words} shows how \obiwan\, works. a 200x200 pixel DECam \gb, 
 \red{insert few sentences about tractor and its stages.} For more details see \cite{obiwanMethods, tractorPaper}.
 
 \subsection{Injecting Realistic ELGs}
+\label{sec:injecting-elgs}
 
 This section summarizes how we generate the representative sample of eBOSS ELG-like galaxies that we inject into the images. A representative sample is crucial to the success of our method because we can only use the randoms if they truly mimic the properties of the real galaxies we are interested in. 
 
-We use the joint tables of \tractor\, catalogues and eboss21, 22, 23 spectra, 
-\begin{itemize}
-\item \verb|eBOSS.ELG.obiwan.eboss21.v5_10_4.fits|
-\item \verb|eBOSS.ELG.obiwan.eboss2122.v5_10_7.fits| 
-\item \verb|eBOSS.ELG.obiwan.eboss22.v5_10_4.fits|
-\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_4.fits|
-\item \verb|eBOSS.ELG.obiwan.eboss23.v5_10_7.fits|
-\end{itemize}
-to construct a sample of eBOSS ELG targets having a redshift, shape, and \gb, \rband, \zb flux. 
-DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the sample into separate DEV and EXP samples. We also drop all NGC galaxies (about 30\% of the sample) because the NGC \tractor catalogues are not complete to \gb $< 23.8$ mag (see Fig. \ref{fig:ngc-incomplete}), 0.025 - 0.1 mag brighter than the \gb\, limit for eBOSS ELGs. The final ``eBOSS'' sample has 77,525 EXP and 7,439 DEV galaxies. See Section \ref{a:input-sample} for more details.
+We use the eBOSS-\tractor\, tables to build a sample of eBOSS ELG targets having a redshift, shape, and \gb, \rband, \zb flux. DEV galaxies are systematically larger and about 1 mag brighter than EXP in all bands (see Fig. \ref{fig:dev-brighter}), so we split the sample into separate DEV and EXP samples. We also drop all NGC galaxies (about 30\% of the sample) because the NGC \tractor catalogues are not complete to \gb $< 23.8$ mag (see Fig. \ref{fig:ngc-incomplete}), 0.025 - 0.1 mag brighter than the \gb\, limit for eBOSS ELGs. The final ``eBOSS'' sample has 77,525 EXP and 7,439 DEV galaxies. See Section \ref{a:input-sample} for more details.
 
-The eBOSS sample does not extend beyond the eBOSS ELG selection boundaries, but to simulate contamination we need to inject ELGs just outside the eBOSS ELG selection boundaries. We create a DR3-DEEP2 matched sample using a 1\arcsec\, matching radius, and find that it reproduces the brightness, shape, and redshift distributions of the eBOSS sample (see Section \ref{a:eboss-almost-targets}). The DR3-DEEP2 galaxies extend beyond the eBOSS ELG selection boundaries, so we construct a sample of ELGs that are within 0.2 mag of the boundaries. The final ``DR3-DEEP2'' sample has 1,064 EXP and 85 DEV galaxies. See Section \ref{a:eboss-almost-targets} for more details.
+The eBOSS sample does not extend beyond the eBOSS ELG selection boundaries, but to simulate contamination we need to inject ELGs just outside the eBOSS ELG selection boundaries. We find that our DR3-DEEP2 matched table reproduces the brightness, shape, and redshift distributions of the eBOSS sample (see Section \ref{a:eboss-almost-targets}). The DR3-DEEP2 galaxies extend beyond the eBOSS ELG selection boundaries, so we construct a sample of ELGs that are within 0.2 mag of the boundaries. The final ``DR3-DEEP2'' sample has 1,064 EXP and 85 DEV galaxies. See Section \ref{a:eboss-almost-targets} for more details.
 
 We now describe our algorithm to jointly sample redshift from the eBOSS n(z) and the associated \gb, \rband, \zb flux and shape from our eBOSS and DR3-DEEP2 samples. The eBOSS n(z) is the redshift distribution from the \verb|eBOSS.ELG.obiwan.eboss*.fits| tables weighted by spectroscopic completeness (1/TSR). We intentionally over-fitting a 10 component Gaussian Mixture Model (GMM) to this n(z) so that we can sample from it. 
 
@@ -597,6 +620,8 @@ We say \legacypipe\, recovers a injected source when there is exactly one \tract
 
 \section*{Acknowledgements} 
 \label{sec:ack}
+
+Funding for the DEEP2 Galaxy Redshift Survey has been provided by NSF grants AST-95-09298, AST-0071048, AST-0507428, and AST-0507483 as well as NASA LTSA grant NNG04GC89G.
  
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
