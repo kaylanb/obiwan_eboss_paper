@@ -329,16 +329,16 @@ The first round of eBOSS ELG target selection \citep{anand17} used a combination
 \end{figure}
 
 \subsection{eBOSS ELG Target Selection}
+\label{sec:eboss-ts}
 
 eBOSS selected ELGs from DR3-plus \tractor\, catalogues having clean DECaLS photometry, locations outside bright star masks, sufficient \gb-flux to be [O II] emitters and star forming galaxies, and \grcolor\, and \rzcolor\, color associated with galaxies in the desired redshift range of 0.5 - 2. The eBOSS ELG footprint is split into the two regions (blue boxes) shown in Fig. \ref{fig:ccds-eboss}. The regions include 620 deg$^2$ in the South Galactic Cap (SGC) and 600 deg$^2$ in the North Galactic Cap (NGC). ELGs in the SGC are selected using by the following \tractor\, catalogue cuts,
 
 \begin{itemize}
-\item \verb|brick_primary|
-\item not in bright star masks
-\item \verb|decam_anymask[grz] = 0|
+\item \verb|brick_primary = True|
 \item $21.825 < g < 22.825$
 \item $-0.068\, (r-z) + 0.457 < g-r < 0.112\, (r-z) + 0.773$
 \item $0.218\, (g-r) + 0.571 < r-z < -0.555\, (g-r) + 1.901$
+\item \verb|decam_anymask[grz] = 0|
 \end{itemize}
 
 \noindent The NGC cuts are identical except for,
@@ -348,7 +348,7 @@ eBOSS selected ELGs from DR3-plus \tractor\, catalogues having clean DECaLS phot
 \item $0.637\, (g-r) + 0.399 < r-z$
 \end{itemize}
 
-\noindent For more details see \cite{anand17}.
+\noindent Bright star masks are also applied. For more details see \cite{anand17}.
 
 It was later discovered that \verb|decam_anymask[grz] = 0| is magnitude dependent \red{also redshift biased?} and is removes many good ELG candidates. \verb|decam_allmask[grz] = 0| should have been used instead. Identifying and removing the biases and systematics introduced \verb|decam_anymask[grz] = 0| has proven difficult; fortunately, our \obiwan\, Monte-Carlo simulations will resolve this problem because they provide a set of randoms with and without the \verb|decam_anymask[grz] = 0| cut applied. 
 
@@ -369,6 +369,11 @@ To build a representative sample of eBOSS ELG galaxies (see \S\, \ref{sec:inject
 \subsection{The DEEP2 Galaxy Redshift Survey (DEEP2)}
 
 DEEP2 obtained about 50,000 high resolution (R $\sim 6000$) spectra of redshift $\sim 1$ galaxies using the DEIMOS multi-object on Keck 2 \citep{deep2}. The DEEP2 footprint is 2.8 deg$^2$, split into four disjoint regions: Field 1 (14hr), Field 2 (16h), Field 3 (23h), and Field 4 (02h). We create a DEEP2 (DR4) and DECaLS DR3 matched table by finding the nearest DR3 \tractor\, catalogue source within a 1\arcsec search radius of each DEEP2 spectrum. The DECaLS DR3 footprint does not overlap Field 1, so our table only includes Fields 2-4. We refer to it as the DR3-DEEP2 table and use it in \S\, \ref{sec:injecting-elgs}.
+
+\subsection{The CFHT-BOSS-DEEP2 Angular Correlation Function for ELGs}
+\label{sec:data-corrfunc}
+
+How the angular correlation function behaves for eBOSS-like ELGs has been determined by previous studies. We compare this known result to our angular correlation function in Section \ref{sec:results-cf}. \cite{corrfuncEboss} computed the angular correlation function for an ELG galaxy sample selected using $\sim 50$ deg$^2$ of $ugri$-photometry from the Canada-France-Hawaii Telescope Legacy Survey (CFHT-LS) and (1\arcsec matched) spectroscopy from BOSS DR12 and DEEP2. Their sample is located in the W3 field, has 500 ELGs per deg$^2$, a redshift range of $0.6 < z < 1$. We will refer to this as the CFHT-BOSS-DEEP2 angular correlation function.
 
 \section{Methods}
 \label{sec:methods}
@@ -480,9 +485,7 @@ Our uncertainties assume that the central limit theorem applies, i.e. our 20 sub
 \begin{align}
 \sigma_{\rm{w(\theta), Jack}}^2 = \frac{N-1}{N}\sum_i^N (w_i(\theta) - \bar{w(\theta)})^2,
 \end{align}
-\noindent where N is the number of subsamples, and $(N-1) / N$ is the fraction of the total sample, by area, of each subsample.
-  
-We expect $\sigma_{\rm{w(\theta), Jack}} >> \sigma_{\rm{w(\theta), Chance}}$ because there will be hundreds of galaxy-galaxy pairs but only tens of Jackknife subsamples.  
+\noindent where N is the number of subsamples, and $(N-1) / N$ is the fraction of the total sample, by area, of each subsample. 
 
 \section{Results}
 \label{sec:results}
@@ -565,10 +568,30 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
 \end{figure}
 
 \subsection{The Angular Correlation Function}
+\label{sec:results-cf}
 
 \red{INSERT HUI's WORK}
 
 \obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
+
+We select real galaxies from the DR3-plus catalogues, and randoms from the \obiwan catalogues, by applying the NGC criteria for eBOSS ELGS (Section \ref{sec:eboss-ts}) and these additional cuts to remove sources coming from low depth imaging,
+\begin{itemize}
+\item \verb|psfdepth_g| $> 62.797$
+\item \verb|psfdepth_r| $> 30.057$ 
+\item \verb|psfdepth_z| $> 11.0$
+\end{itemize}
+
+We compute the angular distance between two RA, Dec point as
+\begin{align}
+\cos(\theta_1) \cos(\theta_2) \cos(\phi_1-\phi_2) + \sin(\theta_1)\sin(\theta_2),
+\end{align}
+\noindent where $\theta = (-\text{Dec}+90.) \pi/180$ and $\phi = \text{RA} \pi/180$.
+
+The error bars in Fig. \ref{} are the standard deviations of the Jackknife subsamples (Eqn. \ref{eqn:varjack}) because $\sigma_{\rm{w(\theta), Chance}} \sim X \ll \sigma_{\rm{w(\theta), Jack}}$.
+
+Green is the CFHT-BOSS-DEEP2 angular correlation function (see Section \ref{sec:data-corrfunc}).   
+
+The mean redshift of eBOSS n(z) is $z \sim 0.8$, which corresponds to $\sim 20\,h^{-1}\,$ Mpc per degree. The range in Fig. \ref{} is roughly $X - X \,h^{-1}\,$ Mpc.
 
 \subsection{Anymask}
 
