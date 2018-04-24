@@ -420,7 +420,7 @@ We draw redshifts from n(z), dropping those outside the allowed redshift range [
 
 We use \obiwan\, to inject simulated galaxies into the DECam CCDs used to create the DR3-plus \tractor\, catalogues. We use the current version of \legacypipe\, and not the two year-old version that actually created the DR3-era \tractor catalogues. We do not expect this to bias our results because we find excellent agreement between DR3 and DR5 measurements for the same sources. We configure \obiwan\, to run \legacypipe\, with the \verb|--simp| option, which uses the SIMP model instead of REX, and to explicitly use all the input CCDs (used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets).   
 
-\subsection{Using the Angular Correlation Function to Gauge Scientific Impact}
+\subsection{The Angular Correlation Function}
 
 We will compute the angular correlation function, with and without \obiwan\, randoms, to gauge the scientific impact of \obiwan\, on eBOSS science. 
 
@@ -449,6 +449,40 @@ Computing the correlation function reduces to counting all pairs of galaxies wit
 \noindent is an unbiased estimator for the correlation function, where galaxy-galaxy (GG), galaxy-random (GR), and random-random (RR) are the pair counts in separation ($\Delta s$) bins. We use a different notation than the literature, GG instead of DD (data-data) and GR instead of DR (data-random), because we want to emphasize that the data are images and we are performing all kinds of analyses to select a potentially biased sample of galaxies. The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.   
 
 The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample. 
+
+For computing the angular correlation function: \citep{corrfuncHamilton, corrfuncErrors, corrfuncIC}.
+
+\begin{itemize}
+\item N$_{sub}$ subsamples of equal area. This is k-fold cross validation with $k=N_{sub}$ but with spatially not randomly chosen subsamples. Too many subsamples (i.e. subsamples with too small an area) creates dependent samples, while too few subsamples does not appreciably reduce (by $1/\sqrt{N_{sub}}$ ) the uncertainty on the \red{variance/average of counts?}. The spatial extent of each subsample also determines the maximum 
+\item clustering measurement is made using each subsample 
+\item jackknife method overestimates the variance by up to 25\% \cite{corrfuncErrors}.
+\item (for discussion) the per-brick weight maps could be used to create mock data sets using N-body simulations for the evolution of dark matter clustering in the universe. The variance on the angular correlation could be estimated from such mocks, instead of with the Jackknife method as we did in this paper.
+\end{itemize}
+ 
+The joint probability of finding two objects of interest in solid angle $d\Omega_1$ and $d\Omega_2$ separated by angle $\theta$ is given by
+\begin{align}
+dP(\theta)= n^2 [1+w(\theta) ] d\Omega_1 d\Omega_2
+\end{align}
+ 
+Our statistic of interest is the angular correlation function. We use the \cite{landy93} minimum variance estimator,  
+\begin{align}
+w(\theta) &= 1 + \frac{N_R (N_R - 1)}{N_D (N_D - 1)} \frac{DD}{RR} - 2\lp \frac{N_R-1}{N_D} \rp \frac{DR}{RR} \\
+&\approx 1 + \lp \frac{N_R}{N_D} \rp^2 \frac{DD}{RR} - 2\lp \frac{N_R }{N_D} \rp \frac{DR}{RR},
+\end{align}
+which is also an unbiased estimator for the two-point correlation function \citep{corrfuncIC}. $DD$ is the number of real galaxy-real galaxy pairs with separation between $\theta$ and $\theta + \Delta \theta$, $RR$ is the number of random-random pairs, and $N_D$ and $N_R$ are the total number of real galaxies and randoms in the data set, respectively.   
+
+Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\theta)$ and $RR(\theta)$ also contribute to the variance of our $w(\theta)$ measurements. Because $RR(\theta) / DD(\theta) \approx  X$, the $1/\sqrt{DD({\theta})}$ term dominates the chance fluctuation contribution, and the variance in our $w(\theta)$ estimates due to chance fluctuation is \citep{corrfuncIC}
+\begin{align}
+\sigma_{\rm{w(\theta), Chance}}^2 = \frac{1}{DD(\theta)}[1+w(\theta) ]^2.
+\end{align}
+
+Our uncertainties assume that the central limit theorem applies, i.e. our 20 subsamples are sufficiently many so that our $w(\theta)$ estimates are Gaussian distributed \cite{corrfuncHamilton}. $N=50$ leads to $\sim 10$\% errors on the variance \red{HOW SHOW THIS?}. For our Jackknife subsamples, assuming that our$w(\theta)$ estimates are Gaussian distributed (i.e. 20 subsamples is sufficiently many for the Central Limit Theorem to apply), the variance of the distribution of our $w(\theta)$ estimates is
+\begin{align}
+\sigma_{\rm{w(\theta), Jack}}^2 = \frac{N-1}{N}\sum_i^N (w_i(\theta) - \bar{w(\theta)})^2,
+\end{align}
+\noindent where N is the number of subsamples, and $(N-1) / N$ is the fraction of the total sample, by area, of each subsample.
+  
+We expect $\sigma_{\rm{w(\theta), Jack}} >> \sigma_{\rm{w(\theta), Chance}}$ because there will be hundreds of galaxy-galaxy pairs but only tens of Jackknife subsamples.  
 
 \section{Results}
 \label{sec:results}
@@ -530,37 +564,17 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
  \label{fig:redshifts-recovered}
 \end{figure}
 
-\subsection{Using the Angular Correlation Function to Gauge Scientific Impact}
+\subsection{The Angular Correlation Function}
 
 \red{INSERT HUI's WORK}
 
-For computing the angular correlation function: \citep{corrfuncErrors, corrfuncIC}.
-
 \obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
 
-\subsection{The eBOSS ``anymask'' cut}
+\subsection{Anymask}
 
-\begin{itemize}
-\item N$_{sub}$ subsamples of equal area. This is k-fold cross validation with $k=N_{sub}$ but with spatially not randomly chosen subsamples. Too many subsamples (i.e. subsamples with too small an area) creates dependent samples, while too few subsamples does not appreciably reduce (by $1/\sqrt{N_{sub}}$ ) the uncertainty on the \red{variance/average of counts?}. 
-\item clustering measurement is made using each subsample 
-\item jackknife method overestimates the variance by up to 25\% \cite{corrfuncErrors}.
-\item (for discussion) the per-brick weight maps could be used to create mock data sets using N-body simulations for the evolution of dark matter clustering in the universe. The variance on the angular correlation could be estimated from such mocks, instead of with the Jackknife method as we did in this paper.
-\end{itemize}
+\red{INSERT FRACTION ANYMASK / ALLMASK heatmap}
 
-The covariance of any statistic, such as the mean $\bar{x}$, is
-\begin{align}
-C_{jk}(x_i,x_j) = \frac{1}{N}\sum_i^k (x_i^k - \bar{x}_i) (x_j^k - \bar{x}_j),
-\end{align}
-\noindent where N is the number of subsamples. For Jackknife subsamples, the covariance ($C_{jack}$) is
-\begin{align}
-C_{\rm{Jack}} = (N-1) \, C_{jk}(x_i,x_j),
-\end{align}
-\noindent because each subsample contains $(N-1) / N$ of the sample by area.
- 
-The statistic we are estimating is 
-\begin{align}
-w(\theta) = 
-\end{align}
+
 
 \red{Make a fraction recovered map after applying the anymask cut and show an angular correlation function with and without anymask}
 
