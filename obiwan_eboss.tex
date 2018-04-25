@@ -427,42 +427,34 @@ We use \obiwan\, to inject simulated galaxies into the DECam CCDs used to create
 
 \subsection{The Angular Correlation Function}
 
-The correlation function is a clustering statistic that measures the clustering of galaxies, relative to a unclustered random distribution, for a range of galaxy-galaxy separations. The two point correlation function (2PCF, $\xi(r)$) uses the 3D positions (RA, Dec, and redshift) of the galaxies, while the angular correlation function (ACF, $w(\theta)$) uses the 2D positions (RA, Dec). We will use the ACF to gauge the scientific impact of \obiwan\, on eBOSS science.
+The correlation function is a clustering statistic that measures the clustering of galaxies, relative to a random distribution on the unit sphere, for a range of galaxy-galaxy separations. The two point correlation function (2PCF, $\xi(r)$) uses the 3D positions (RA, Dec, and redshift) of the galaxies, while the angular correlation function (ACF, $w(\theta)$) uses the 2D positions (RA, Dec). We will use the ACF to gauge the scientific impact of \obiwan\, on eBOSS science.
 %distance to each galaxy from Earth (e.g. measured from a spectrum).
 
 The joint probability of finding two galaxies in solid angle $d\Omega_1$ and $d\Omega_2$ separated by angle $\theta$ is given by \citep{corrfuncIC}
 \begin{align}
 dP(\theta)= n^2 [1+w(\theta) ] d\Omega_1 d\Omega_2,
 \end{align}
-\noindent where n is the surface density of galaxies. The ACF is how much more (or less) likely we are to find a galaxy than if the galaxies were unclustered and randomly distributed. The minimum variance estimator for the ACF is \citep{landy93},  
+\noindent where n is the surface density of galaxies. The ACF is how much more (or less) likely we are to find a galaxy than we would if they were randomly distributed on the unit sphere. The minimum variance estimator for the ACF is \citep{landy93},  
 \begin{align}
 w(\theta) &= 1 + \frac{N_R (N_R - 1)}{N_D (N_D - 1)} \frac{DD}{RR} - 2\lp \frac{N_R-1}{N_D} \rp \frac{DR}{RR} \nonumber \\
 &\approx 1 + \lp \frac{N_R}{N_D} \rp^2 \frac{DD}{RR} - 2\lp \frac{N_R }{N_D} \rp \frac{DR}{RR} 
-label{eqn:landy93}.
+\label{eqn:landy93}.
 \end{align}
 where $DD$ is the number of real galaxy-real galaxy pairs with separation between $\theta$ and $\theta + \Delta \theta$, $RR$ is the number of random-random pairs, and $N_D$ and $N_R$ are the total number of real galaxies and randoms in the data set, respectively. Computing the correlation function reduces to pair-counting three samples of points for different pair separations ($\theta$).
 %which is also an unbiased estimator for the two-point correlation function \citep{corrfuncIC}.  
-%The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure used to select the galaxy sample.    
+%The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure u99sed to select the galaxy sample.    
 
-We will compute the ACF using Jackknife sampling, where 
-
-N$_{sub}$ subsamples of equal area. This is k-fold cross validation with $k=N_{sub}$ but with spatially not randomly chosen subsamples. Too many subsamples (i.e. subsamples with too small an area) creates dependent samples, while too few subsamples does not appreciably reduce (by $1/\sqrt{N_{sub}}$ ) the uncertainty on the \red{variance/average of counts?}. The spatial extent of each subsample also determines the maximum 
-
-clustering measurement is made using each subsample 
-
-jackknife method overestimates the variance by up to 25\% \cite{corrfuncErrors}.
-
+We will compute the ACF using Jackknife sampling. For each bin in $\theta$, we estimate the average $w(\theta)$ ($\bar{w(\theta)}$) as the ACF over the full survey footprint. To estimate the variance of our $\bar{w(\theta)}$ measurement ($\sigma_{\rm{w(\theta), Jack}}^2$), we divide the footprint into N$_{sub}$ equal area regions. This yields N$_{sub}$ different subsamples each with area $(N_{sub} - 1) / N$ times that of the footprint. We compute the ACF in each subsample and the variance of our N$_{sub}$ $w(\theta)$ measurements is $\sigma_{\rm{w(\theta), Jack}}^2$,
+\begin{align}
+\sigma_{\rm{w(\theta), Jack}}^2 = \frac{N-1}{N}\sum_i^N (w_i(\theta) - \bar{w(\theta)})^2,
+\end{align}
+\noindent This is equivalent to k-fold cross validation using $k=N_{sub}$ and spatially chosen subsamples, instead of random. Too many subsamples (i.e. subsamples with too small an area) results in dependent subsamples and limits the maximum $\theta$ that $w(\theta)$ can be measured for; too few subsamples leads to a large variance on $w(\theta)$. For a Gaussian distribution, the standard error on an estimate of the standard deviation ($\sigma$) is $\text{std. error} \approx \sigma/\sqrt{2(N-1)}$ \citep{stderrVar}. For $N_{sub}=50$, the relative standard error on $\sigma_{\rm{w(\theta), Jack}}$ is 10\% \citep{corrfuncErrors}.
 
 Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\theta)$ and $RR(\theta)$ also contribute to the variance of our $w(\theta)$ measurements. Because $RR(\theta) / DD(\theta) \approx  X$, the $1/\sqrt{DD({\theta})}$ term dominates the chance fluctuation contribution, and the variance in our $w(\theta)$ estimates due to chance fluctuation is \citep{corrfuncIC}
 \begin{align}
 \sigma_{\rm{w(\theta), Chance}}^2 = \frac{1}{DD(\theta)}[1+w(\theta) ]^2.
 \end{align}
 
-Our uncertainties assume that the central limit theorem applies, i.e. our 20 subsamples are sufficiently many so that our $w(\theta)$ estimates are Gaussian distributed \cite{corrfuncHamilton}. $N=50$ leads to $\sim 10$\% errors on the variance \red{HOW SHOW THIS?}. For our Jackknife subsamples, assuming that our$w(\theta)$ estimates are Gaussian distributed (i.e. 20 subsamples is sufficiently many for the Central Limit Theorem to apply), the variance of the distribution of our $w(\theta)$ estimates is
-\begin{align}
-\sigma_{\rm{w(\theta), Jack}}^2 = \frac{N-1}{N}\sum_i^N (w_i(\theta) - \bar{w(\theta)})^2,
-\end{align}
-\noindent where N is the number of subsamples, and $(N-1) / N$ is the fraction of the total sample, by area, of each subsample. 
 
 
 Assuming a power law for $\xi(r)$,
@@ -595,6 +587,8 @@ The error bars in Fig. \ref{} are the standard deviations of the Jackknife subsa
 Green is the CFHT-BOSS-DEEP2 angular correlation function (see Section \ref{sec:data-corrfunc}).   
 
 The mean redshift of eBOSS n(z) is $z \sim 0.8$, which corresponds to $\sim 20\,h^{-1}\,$ Mpc per degree. The range in Fig. \ref{} is roughly $X - X \,h^{-1}\,$ Mpc.
+
+By estimating $\sigma_{\rm{w(\theta), Jack}}^2$ with Jackknife sampling we may be overestimating $\sigma_{\rm{w(\theta)}}$ by up to 25\% \cite{corrfuncErrors}. We are assuming that our $N_{sub}$ $w(\theta)$ measurements, for each bin in $\theta$, are Gaussian distributed \cite{corrfuncHamilton}. The Central Limit Theorem says that a statistic measured for any distribution will be Gaussian distributed as long as that statistic is measured enough times. \cite{astroML} suggests that 32 is a good rule of thumb, but it depends on the problem size. We use $N_{sub} = 20$, so this may bias our Jackknife estimates for $\sigma_{\rm{w(\theta), Jack}}^2$.
 
 %The resulting correlation function is systematically over- and under-dense at different scales due to correlations between galaxy counts and imaging systematics, such as stellar density, seeing, galactic extinction, etc. (Ross et al papers). The correlation function is the expectation value of the number of galaxy pairs, so it is intuitive to write it as a weighted sum, where each weight represents the fraction of those pairs that are over- or under-represented in the sample.
 
