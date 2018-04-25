@@ -379,6 +379,7 @@ Previous studies have measured the angular correlation function for eBOSS-like E
 \label{sec:methods}
 
 \subsection{\obiwan}
+\label{sec:methods-obiwan}
 
 \obiwan\, modifies the \gb, \rband, \zb\, images that \legacypipe\, operates on by adding simulated sources to the individual exposures and appropriately modifying the inverse variance images. The simulated sources include poisson noise from the source itself. The power of \obiwan\, is that the injected sources inherit the sky background, systematics, or whatever else is present in the data, so nothing more than the simulated galaxy or star of interest is injected. \legacypipe\, does not know the images have been modified and source detection, model fitting, and model selection proceed as usual. For more details see \cite{obiwanMethods}. 
 
@@ -402,7 +403,8 @@ Fig. \ref{fig:1000-words} shows how \obiwan\, works. a 200x200 pixel DECam \gb, 
  \label{fig:examples-bright}
 \end{figure} 
 
-\obiwan\, performs a Monte-Carlo Simulation by injecting the simulated galaxies at random RA and Dec, running \legacypipe, and repeating for the same images. In large scale structure terminology, the randoms that would be used in a correlation function analysis are the injected galaxies that \legacypipe\, detects, models, and measures properties for that pass some target selection criteria. The initially random RA and Dec centroids have been modified by the same survey geometry, source detection, measurement, and target selection process that modified the real galaxy targets in the images. Unlike the methods that rely on backward-modeling of apriori imaging systematics, these {\it{obiwan randoms}} have already modified by the full covariance between {\it{all}} imaging systematics, those we expected apriori but also those not expected or unknown. The obiwan randoms are also modified by any biases and systematics in the \legacypipe\, pipeline which are of course in the real galaxy sample as well. 
+\obiwan\, performs a Monte-Carlo Simulation by injecting the simulated galaxies at random RA and Dec, running \legacypipe, and repeating for the same images. In large scale structure terminology, the randoms that would be used in a correlation function analysis are the injected galaxies that \legacypipe\, detects, models, and measures properties for that pass some target selection criteria. The initially random galaxy positions are modified by the geometry of the footprint, source detection, measurement, target selection, and any biases and systematics in the \legacypipe\, pipeline. We will refer to the initially random but now substantially modified galaxy positions as \obiwan-randoms, and the initially random positions modified by the geometry of the footprint as uniform-randoms.
+%Unlike the methods that rely on backward-modeling of apriori imaging systematics, these {\it{obiwan randoms}} have already modified by the full covariance between {\it{all}} imaging systematics, those we expected apriori but also those not expected or unknown. The obiwan randoms are also modified which are of course in the real galaxy sample as well. 
 
 \subsection{\tractor}
 
@@ -426,6 +428,7 @@ We draw redshifts from n(z), dropping those outside the allowed redshift range [
 We use \obiwan\, to inject simulated galaxies into the DECam CCDs used to create the DR3-plus \tractor\, catalogues. We use the current version of \legacypipe\, and not the two year-old version that actually created the DR3-era \tractor catalogues. We do not expect this to bias our results because we find excellent agreement between DR3 and DR5 measurements for the same sources. We configure \obiwan\, to run \legacypipe\, with the \verb|--simp| option, which uses the SIMP model instead of REX, and to explicitly use all the input CCDs (used to create the DR3-era \tractor\, catalogues and to select the eBOSS ELG targets).   
 
 \subsection{The Angular Correlation Function}
+\label{sec:methods-cf}
 
 The correlation function is a clustering statistic that measures the clustering of galaxies, relative to a random distribution on the unit sphere, for a range of galaxy-galaxy separations \citep{peebles1980, corrfuncHamilton, weinberg, corrfuncErrors, corrfuncIC, corrfuncEboss}. The two point correlation function (2PCF, $\xi(r)$) uses the 3D positions (RA, Dec, and redshift) of the galaxies, while the angular correlation function (ACF, $w(\theta)$) uses the 2D positions (RA, Dec). A power law is often assumed for $\xi(r)$,
 \begin{align}
@@ -552,23 +555,23 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
 \subsection{The Angular Correlation Function}
 \label{sec:results-cf}
 
-We select real galaxies (DD) from the DR3-plus catalogues\footnote{\url{https://data.sdss.org/sas/ebosswork/eboss/sandbox/lss/catalogs/versions/1_1/eBOSS_ELG_full_ALL_v1_1.dat.fits}}, and randoms (RR) from the \obiwan\, catalogues, by applying the NGC criteria for eBOSS ELGS (Section \ref{sec:eboss-ts}) and these additional cuts to remove sources coming from low depth imaging,
+To compute the angular correlation function with and without \obiwan, we select galaxies (DD) from the DR3-plus catalogues\footnote{\url{https://data.sdss.org/sas/ebosswork/eboss/sandbox/lss/catalogs/versions/1_1/eBOSS_ELG_full_ALL_v1_1.dat.fits}} and randoms (RR) from either the \obiwan-randoms or uniform-randoms catalogues. We apply the eBOSS ELG NGC cuts in Section \ref{sec:eboss-ts}, the veto masks
+%\footprint{\url{https://trac.sdss.org/wiki/eBOSS/QGC/ELG/ELG_data\#VetoMasks}} 
+from \cite{anand17}, and these cuts to remove sources in low depth imaging,
 \begin{itemize}
 \item \verb|psfdepth_g| $> 62.797$
 \item \verb|psfdepth_r| $> 30.057$ 
 \item \verb|psfdepth_z| $> 11.0$
 \end{itemize}
-We apply the veto masks
-%\footprint{\url{https://trac.sdss.org/wiki/eBOSS/QGC/ELG/ELG_data\#VetoMasks}} 
-from \cite{anand17} to the DD and RR samples. To match the DD and RR footprints, we restrict all datasets to the eBOSS 23 footprint 
-%\footnote{\url{https://trac.sdss.org/wiki/eBOSS/QGC/ELG/ELG_data\#FootprintMasks}} 
-and require $\text{Dec} > 14.05$. We use the \cite{landy93} estimator (Eqn. \ref{eqn:landy93}) to compute the ACF. The angular separation between two RA, Dec points is
+We restrict the DD and RR datasets to the eBOSS 23 footprint 
+%\footnote{\url{https://trac.sdss.org/wiki/eBOSS/QGC/ELG/ELG_data\#FootprintMasks}}
+and $\text{Dec} > 14.05$, since this is where the datasets overlap the most. The angular separation ($\theta$) between a pair of points with (RA$_1$, Dec$_1$) and (RA$_2$, Dec$_2$) is,
 \begin{align}
-\cos(\theta_1) \cos(\theta_2) \cos(\phi_1-\phi_2) + \sin(\theta_1)\sin(\theta_2),
+\theta = \cos(\psi_1) \cos(\psi_2) \cos(\phi_1-\phi_2) + \sin(\psi_1)\sin(\psi_2),
 \end{align}
-\noindent where $\theta = (-\text{Dec}+90.) \pi/180$ and $\phi = \text{RA} \pi/180$. 
+\noindent where $\psi = (-\text{Dec}+90) \,\pi/180$ and $\phi = \text{RA} \times \pi/180$. We compute the ACF using the \cite{landy93} estimator (see Eqn. \ref{eqn:landy93}) and plot the results in Fig. \ref{fig:cf}. 
 
-Fig. \ref{fig:cf} shows the ACF with and without \obiwan\, randoms. The CFHT-BOSS-DEEP2 correlation function (see Section \ref{sec:data-corrfunc}) is shown for reference, and it agrees with \obiwan. We compute $w(\theta)$ at 27 evenly spaced logarithmic $\theta$ bins, centered between 10$^{-2}$ and 5 deg. The mean redshift of the eBOSS ELG n(z) is $z \sim 0.8$. This corresponds to $\sim 20\,h^{-1}\,$ Mpc per degree, so our $\theta$ bins span $\sim 0.2 - 100 \,h^{-1}\,$ Mpc.
+Fig. \ref{fig:cf} compares the ACFs for \obiwan-randoms (the new method proposed in this paper) and uniform-randoms (see Section \ref{sec:methods-obiwan}) to the CFHT-BOSS-DEEP2 correlation function (see Section \ref{sec:data-corrfunc}). The CFHT-BOSS-DEEP2 ACF agrees well with the result using \obiwan-randoms. We compute $w(\theta)$ at 27 evenly spaced logarithmic $\theta$ bins, centered between 10$^{-2}$ and 5 deg. The mean redshift of the eBOSS ELG n(z) is $z \sim 0.8$. This corresponds to $\sim 20\,h^{-1}\,$ Mpc per degree, so our $\theta$ bins span $\sim 0.2 - 100 \,h^{-1}\,$ Mpc.
 
 \begin{figure}
      \subfloat[\label{fig:w-theta}]{
@@ -582,11 +585,11 @@ Fig. \ref{fig:cf} shows the ACF with and without \obiwan\, randoms. The CFHT-BOS
      \subfloat[\label{fig:thetaw-theta-zoom}]{
        \includegraphics[width=\columnwidth]{corrfunc_eboss23_wtheta_theta_zoom}
      }
-\caption{Angular correlation function with and without \obiwan. Blue is the \obiwan\, result and green is for uniform randoms. Orange is the CFHT-BOSS-DEEP2 correlation function, which agrees well with \obiwan. (Top) $w(\theta)$ versus $\theta$. (Middle) $\theta \times w(\theta)$ versus $\theta$. (Bottom) Zoom in on Middle plot. We use 27 evenly spaced logarithmic $\theta$ bins, centered between 10$^{-2}$ and 5 deg. The mean redshift of the eBOSS ELG n(z) is $z \sim 0.8$. This corresponds to $\sim 20\,h^{-1}\,$ Mpc per degree, so our $\theta$ bins span $\sim 0.2 - 100 \,h^{-1}\,$ Mpc.}
+\caption{Angular correlation functions. Blue uses \obiwan-randoms for RR and is the new method proposed in this paper, green uses uniform-randoms for RR, and orange is the CFHT-BOSS-DEEP2 correlation function. We use 27 evenly spaced logarithmic $\theta$ bins, centered between 10$^{-2}$ and 5 deg. (Top) $w(\theta)$ versus $\theta$. (Middle) $\theta \times w(\theta)$ versus $\theta$. (Bottom) Zoom in on Middle plot.}
 \label{fig:cf}
 \end{figure}
 
-Each data point in Fig. \ref{fig:cf} is the ACF of the full footprint ($\bar{w(\theta)}$). The error bars come from Jackknife sampling, as discussed in Section \ref{sec:methods-acf}, using $N_{sub} = 20$ equal area subsamples (Healpix pixels). There are thousands of galaxy-galaxy pairs per subsample so we can ignore the chance fluctuation contribution to $\sigma_{\rm{w(\theta)}}$.  
+Each data point in Fig. \ref{fig:cf} is the ACF of the full footprint ($\bar{w(\theta)}$). The error bars come from Jackknife sampling, as discussed in Section \ref{sec:methods-cf}, using $N_{sub} = 20$ equal area subsamples (Healpix pixels). There are thousands of galaxy-galaxy pairs per subsample so we can ignore the chance fluctuation contribution to $\sigma_{\rm{w(\theta)}}$.  
 
 By estimating $\sigma_{\rm{w(\theta), Jack}}^2$ with Jackknife sampling we may be overestimating $\sigma_{\rm{w(\theta)}}$ by up to 25\% \cite{corrfuncErrors}. We are assuming that our $N_{sub}$ $w(\theta)$ measurements, for each bin in $\theta$, are Gaussian distributed \cite{corrfuncHamilton}. The Central Limit Theorem says that a statistic measured for any distribution will be Gaussian distributed as long as that statistic is measured enough times. \cite{astroML} suggests that 32 is a good rule of thumb, but it depends on the problem size. We use $N_{sub} = 20$, so this may bias our Jackknife estimates for $\sigma_{\rm{w(\theta), Jack}}^2$.
 
@@ -594,17 +597,15 @@ By estimating $\sigma_{\rm{w(\theta), Jack}}^2$ with Jackknife sampling we may b
 
 \subsection{Weight-based Methods}
 
-\obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
+Although computing the angular correlation function with \obiwan\, does not require weight-maps, \obiwan\, can produce various weight maps for use by future map-based studies. The maps could also be used to create mock data sets from N-body simulations of the evolution of dark matter clustering in the universe. For example, the variance of our angular correlation function measurement could be estimated from the mocks, instead of with Jackknife sampling. 
 
-the per-brick weight maps could be used to create mock data sets using N-body simulations for the evolution of dark matter clustering in the universe. The variance on the angular correlation could be estimated from such mocks, instead of with the Jackknife method as we did in this paper.
-
-\subsection{Anymask}
-
-\red{INSERT FRACTION ANYMASK / ALLMASK heatmap}
-
-
-
-\red{Make a fraction recovered map after applying the anymask cut and show an angular correlation function with and without anymask}
+We limit ourselves to three weight maps that might be of interest to future eBOSS ELG studies: 
+\begin{itemize}
+\item {\it{Recovered}}: the fraction of all injected sources that \legacypipe\, detects and measures
+\item {\it{Recovered NGC-ELGs}}: fraction of true NGC eBOSS ELGs that \legacypipe\, detects and measures and that have \tractor\, measurements that pass NGC eBOSS ELG target selection
+\item {\it{Anymask-Allmask-Ratio}}: using \tractor\, measurements, the ratio of the number of sources that pass NGC eBOSS ELG target selection using \verb|allmask_grz = 0| to the number of when using \verb|anymask_grz = 0|
+\end{itemize}
+The resolution of each weight-map is the brick-scale of $\sim 0.25x0.25$ deg. Fig. \ref{fig:obiwan-weight-maps} shows these three weight maps. From top to bottom: Recovered, Recovered NGC-ELGs, and Anymask-Allmask-Ratio. 
 
 \subsection{Biases and Systematics in \legacypipe}
 \label{sec:biases-systematics}
