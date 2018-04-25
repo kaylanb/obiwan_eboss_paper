@@ -427,7 +427,20 @@ We use \obiwan\, to inject simulated galaxies into the DECam CCDs used to create
 
 \subsection{The Angular Correlation Function}
 
-The correlation function is a clustering statistic that measures the clustering of galaxies, relative to a random distribution on the unit sphere, for a range of galaxy-galaxy separations. The two point correlation function (2PCF, $\xi(r)$) uses the 3D positions (RA, Dec, and redshift) of the galaxies, while the angular correlation function (ACF, $w(\theta)$) uses the 2D positions (RA, Dec). We will use the ACF to gauge the scientific impact of \obiwan\, on eBOSS science.
+The correlation function is a clustering statistic that measures the clustering of galaxies, relative to a random distribution on the unit sphere, for a range of galaxy-galaxy separations \citep{peebles1980, corrfuncHamilton, weinberg, corrfuncErrors, corrfuncIC, corrfuncEboss}. The two point correlation function (2PCF, $\xi(r)$) uses the 3D positions (RA, Dec, and redshift) of the galaxies, while the angular correlation function (ACF, $w(\theta)$) uses the 2D positions (RA, Dec). A power law is often assumed for $\xi(r)$,
+\begin{align}
+\xi \propto \lp\frac{r}{r_0}\rp^{-\gamma}, 
+\end{align}
+where $r_0$ is the characteristic separation between galaxies. In the small angle ($\theta \ll 1 \text{rad} \approx 60 \, \text{deg}$) limit, the angular correlation function is also a power law \citep{peebles1980}, 
+\begin{align}
+w \propto \theta^{1-\gamma}. 
+\end{align}
+For ELGs, $\gamma \sim 1.6-1.8$ and $r_0 \sim 4$ Mpc h$^{-1}$ \citep{weinberg, corrfuncEboss}.
+%1.7-1.8 for galaxies (conolloy 2002)
+%ELG gamma=1.6, r0=4 (Ellie)
+%LRG gamma= 1.8, r0=10 (Ellie)
+%QSOs gamm= 1.6, r0=6 (Ellie)
+We will use the ACF to gauge the scientific impact of \obiwan\, on eBOSS science.
 %distance to each galaxy from Earth (e.g. measured from a spectrum).
 
 The joint probability of finding two galaxies in solid angle $d\Omega_1$ and $d\Omega_2$ separated by angle $\theta$ is given by \citep{corrfuncIC}
@@ -444,43 +457,17 @@ where $DD$ is the number of real galaxy-real galaxy pairs with separation betwee
 %which is also an unbiased estimator for the two-point correlation function \citep{corrfuncIC}.  
 %The randoms are a sample of random locations on a unit sphere that are then modified by the same procedure u99sed to select the galaxy sample.    
 
-We will compute the ACF using Jackknife sampling. For each bin in $\theta$, we estimate the average $w(\theta)$ ($\bar{w(\theta)}$) as the ACF over the full survey footprint. To estimate the variance of our $\bar{w(\theta)}$ measurement ($\sigma_{\rm{w(\theta), Jack}}^2$), we divide the footprint into N$_{sub}$ equal area regions. This yields N$_{sub}$ different subsamples each with area $(N_{sub} - 1) / N$ times that of the footprint. We compute the ACF in each subsample and the variance of our N$_{sub}$ $w(\theta)$ measurements is $\sigma_{\rm{w(\theta), Jack}}^2$,
+We will compute the ACF using Jackknife sampling. For each bin in $\theta$, we estimate the average $w(\theta)$ ($\bar{w(\theta)}$) as the ACF over the full survey footprint. To estimate the variance of our $\bar{w(\theta)}$ measurement, i.e. the square of the standard error, we divide the footprint into N$_{sub}$ equal area regions. This yields N$_{sub}$ different subsamples each with area $(N_{sub} - 1) / N$ times that of the footprint. We compute the ACF in each subsample and the variance of our N$_{sub}$ $w(\theta)$ measurements is $\sigma_{\rm{w(\theta), Jack}}^2$,
 \begin{align}
 \sigma_{\rm{w(\theta), Jack}}^2 = \frac{N-1}{N}\sum_i^N (w_i(\theta) - \bar{w(\theta)})^2,
 \end{align}
 \noindent This is equivalent to k-fold cross validation using $k=N_{sub}$ and spatially chosen subsamples, instead of random. Too many subsamples (i.e. subsamples with too small an area) results in dependent subsamples and limits the maximum $\theta$ that $w(\theta)$ can be measured for; too few subsamples leads to a large variance on $w(\theta)$. For a Gaussian distribution, the standard error on an estimate of the standard deviation ($\sigma$) is $\text{std. error} \approx \sigma/\sqrt{2(N-1)}$ \citep{stderrVar}. For $N_{sub}=50$, the relative standard error on $\sigma_{\rm{w(\theta), Jack}}$ is 10\% \citep{corrfuncErrors}.
 
-Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\theta)$ and $RR(\theta)$ also contribute to the variance of our $w(\theta)$ measurements. Because $RR(\theta) / DD(\theta) \approx  X$, the $1/\sqrt{DD({\theta})}$ term dominates the chance fluctuation contribution, and the variance in our $w(\theta)$ estimates due to chance fluctuation is \citep{corrfuncIC}
+Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\theta)$ and $RR(\theta)$ also contribute to $\sigma_{\rm{w(\theta)}}$,
 \begin{align}
-\sigma_{\rm{w(\theta), Chance}}^2 = \frac{1}{DD(\theta)}[1+w(\theta) ]^2.
+\sigma_{\rm{w(\theta), Chance}}^2 = \frac{1}{DD(\theta)}[1+w(\theta) ]^2. \label{eqn:sigma-chance}
 \end{align}
-
-
-
-Assuming a power law for $\xi(r)$,
-\begin{align}
-\xi \propto \lp\frac{r}{r_0}\rp^{-\gamma}, 
-\end{align}
-where $r_0$ is the characteristic separation between galaxies, and the small angle ($\theta \ll 1 \text{rad} \approx 60 \, \text{deg}$) limit, the angular correlation function is also a power law \citep{peebles1980}, 
-\begin{align}
-w \propto \theta^{1-\gamma}. 
-\end{align}
-For ELGs, $\gamma \sim 1.6-1.8$ and $r_0 \sim 4$ Mpc h$^{-1}$ \citep{weinberg, corrfuncEboss}.
-%1.7-1.8 for galaxies (conolloy 2002)
-%ELG gamma=1.6, r0=4 (Ellie)
-%LRG gamma= 1.8, r0=10 (Ellie)
-%QSOs gamm= 1.6, r0=6 (Ellie)
-
-
-
-
-
-For computing the angular correlation function: \citep{corrfuncHamilton, corrfuncErrors, corrfuncIC}.
-
-\begin{itemize}
-\item (for discussion) the per-brick weight maps could be used to create mock data sets using N-body simulations for the evolution of dark matter clustering in the universe. The variance on the angular correlation could be estimated from such mocks, instead of with the Jackknife method as we did in this paper.
-\end{itemize}
- 
+\noindent There is no $RR(\theta)$ term above because correlation function analyses always use more randoms than real galaxies \citep{corrfuncIC}.
 
 \section{Results}
 \label{sec:results}
@@ -568,6 +555,8 @@ The ELGs we inject have the appropriate correlations among brightness, shape, an
 \red{INSERT HUI's WORK}
 
 \obiwan\, allows us to compute the angular correlation function without using weights to up- or down-sample the randoms. However, \obiwan\, does provide weights per-brick, which existing datasets or future studies can use to up- and down-sample with. For instance, weights could be the fraction of injected ELG galaxies that \legacypipe\, recovers (see Fig. \ref{fig:frac-recovered-eboss}) or the fraction of recovered ELGs that remain after the eBOSS anymask cut. 
+
+the per-brick weight maps could be used to create mock data sets using N-body simulations for the evolution of dark matter clustering in the universe. The variance on the angular correlation could be estimated from such mocks, instead of with the Jackknife method as we did in this paper.
 
 We select real galaxies from the DR3-plus catalogues, and randoms from the \obiwan catalogues, by applying the NGC criteria for eBOSS ELGS (Section \ref{sec:eboss-ts}) and these additional cuts to remove sources coming from low depth imaging,
 \begin{itemize}
