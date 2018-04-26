@@ -63,6 +63,8 @@
 \usepackage{tablefootnote} %makes \footnote{} work when inside table (places at bottom page)
 \usepackage{threeparttable} %need this so where put in table notes actually works
 
+\usepackage{cprotect} % use \verb in figure caption{}
+
 \usepackage[dvipsnames]{xcolor}
 \newcommand{\red}[1]{{\textcolor{red}{[#1]}}}
 \newcommand{\blue}[1]{{\textcolor{blue}{[#1]}}}
@@ -463,15 +465,24 @@ Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\
 
 We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick) into the DR3-era CCDs. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. 
 
+We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG targets. The eBOSS ELG target densities are 200 and 240 targets / deg$^2$ in the NGC and SGC, respectively, so the density of simulated ELGs is at least X times higher than the target density for real ELGs.
+
 \begin{figure}
-     \subfloat[NGC\label{fig:number-density-eboss-ngc}]{
-       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_ngc}
+%     \subfloat[Density (\#/deg$^2$) of Injected Sources\label{fig:number-density-eboss-ngc}]{
+%       \includegraphics[width=\columnwidth]{heatmap_num_dens_inj_eboss_ngc_sgc}
+%     }
+     \subfloat[NGC\label{a}]{
+       \includegraphics[width=\columnwidth]{heatmap_num_dens_inj_eboss_ngc}
      }
      \hfill
-     \subfloat[SGC\label{fig:number-density-eboss-sgc}]{
-       \includegraphics[width=\columnwidth]{heatmap_number_density_eboss_sgc}
+     \subfloat[SGC\label{a}]{
+       \includegraphics[width=\columnwidth]{heatmap_num_dens_inj_eboss_sgc}
      }
-\caption{Number density of simulated galaxies in the NGC and SGC footprints. We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG targets. The eBOSS ELG target densities are 200 and 240 targets / deg$^2$ in the NGC and SGC, respectively, so the density of simulated ELGs is at least X times higher than the target density for real ELGs.}
+     \hfill
+     \subfloat[Histograms of Injected Source Density (\#/deg$^2$)\label{a}]{
+       \includegraphics[width=\columnwidth]{hist_num_dens_injected}
+     }
+\caption{Number density of injected galaxies. (Top) NGC footprint. (Middle) SGC footprint. (Bottom) Number density histograms in the NGC and SGC for all injected galaxies (Left) and eBOSS NGC ELGs (Right). The histograms are bimodal because bricks near edges or holes in footprint have less sources. i.e. the smaller mode corresponds to the blue points in (a) and (b).}
 \label{fig:number-density-eboss}
 \end{figure}
 
@@ -498,20 +509,6 @@ Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the sim
  \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
  \caption{Barplot comparing the number of galaxies injected versus recovered by \legacypipe. The injected population is 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.}
  \label{fig:number-per-type}
-\end{figure}
-
-The power of \obiwan\, is evident in Fig. \ref{fig:frac-recovered-eboss}. The heat maps show the fraction of injected galaxies that \legacypipe\, recovers. It is no longer necessary to determine N weights for up- and down-sampling using linear fits to galaxy correlations with N systematics. Fig. \ref{fig:frac-recovered-eboss} is the weights, per brick.
-
-\begin{figure}
-     \subfloat[NGC\label{fig:frac-recovered-eboss-ngc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_ngc}
-     }
-     \hfill
-     \subfloat[SGC\label{fig:frac-recovered-eboss-sgc}]{
-       \includegraphics[width=\columnwidth]{heatmap_fraction_recovered_eboss_sgc}
-     }
-\caption{Fraction of injected galaxies that \legacypipe\, recovers. Higher fractions are generally due to having more CCDs (Fig. \ref{fig:ccds-eboss}).}
-\label{fig:frac-recovered-eboss}
 \end{figure}
 
 \legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that \legacypipe\, fails to detect (not-detected), fail target selection after \legacypipe\, measures them (fail-ts), or are removed by the {\tt{fracin}} cut (fracin-cut; see Section \ref{a:biases-systematics}). The distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box are shown in Fig. \ref{fig:rec-lost-contam-color}. Their \gb, \rband, \zb\, magnitude distributions are shown in Fig. \ref{fig:rec-lost-contam-mag}.
@@ -589,7 +586,27 @@ We limit ourselves to three weight maps that might be of interest to future eBOS
 \item {\it{Recovered NGC-ELGs}}: fraction of true NGC eBOSS ELGs that \legacypipe\, detects and measures and that have \tractor\, measurements that pass NGC eBOSS ELG target selection
 \item {\it{Anymask-Allmask-Ratio}}: using \tractor\, measurements, the ratio of the number of sources that pass NGC eBOSS ELG target selection using \verb|allmask_grz = 0| to the number of when using \verb|anymask_grz = 0|
 \end{itemize}
-The resolution of each weight-map is the brick-scale of $\sim 0.25x0.25$ deg. Fig. \ref{fig:obiwan-weight-maps} shows these three weight maps. From top to bottom: Recovered, Recovered NGC-ELGs, and Anymask-Allmask-Ratio. 
+The resolution of each weight-map is the brick-scale of $\sim 0.25x0.25$ deg. Fig. \ref{fig:weight-maps} shows these three weight-maps from top to bottom. 
+
+\begin{figure}
+     \subfloat[Recovered\label{a}]{
+       \includegraphics[width=\columnwidth]{heatmap_recovered_eboss_ngc}
+     }
+     \hfill
+     \subfloat[Recovered NGC-ELGs\label{a}]{
+       \includegraphics[width=\columnwidth]{heatmap_recovered_ngc_elgs_eboss_ngc}
+     }
+     \hfill
+     \subfloat[Anymask-Allmask-Ratio\label{a}]{
+       \includegraphics[width=\columnwidth]{heatmap_anymask_allmask_ratio_ngc_elgs_eboss_ngc}
+     }
+\cprotect\caption{Weight-maps of imaging systematics that may be useful for future studies that remove imaging systematics with map-based methods. (Top) The fraction of all injected sources that \legacypipe\, detects and measures. (Middle) The fraction of true NGC eBOSS ELGs that \legacypipe\, detects and measures and that have \tractor\, measurements that pass NGC eBOSS ELG target selection. (Bottom) Using \tractor\, measurements, the ratio of the number of sources that pass NGC eBOSS ELG target selection using \verb|allmask_grz = 0| to the number of when using \verb|anymask_grz = 0|. }
+\label{fig:weight-maps}
+\end{figure}
+
+In the Recovered map, higher fractions are generally due to more CCDs (see Fig. \ref{fig:ccds-eboss}); however, in Recovered NGC-ELGs, fewer eBOSS NGC ELGs are selected based on \tractor\, measurements in regions with many and few CCDs, respectively. The Anymask-Allmask-Ratio map shows that the \verb|anymask_grz = 0| cut removes more sources when there are more CCDs (i.e. deeper imaging). It can be up to a 40\% effect but is less than a $10$\% effect on average.
+
+%The power of \obiwan\, is evident in Fig. \ref{fig:frac-recovered-eboss}. The heat maps show the fraction of injected galaxies that \legacypipe\, recovers. It is no longer necessary to determine N weights for up- and down-sampling using linear fits to galaxy correlations with N systematics. Fig. \ref{fig:frac-recovered-eboss} is the weights, per brick.
 
 \subsection{Biases and Systematics in \legacypipe}
 \label{sec:biases-systematics}
