@@ -465,9 +465,8 @@ Chance fluctuations (aka Poisson noise, shot noise, or cosmic variance) in $DD(\
 
 \subsection{Run \obiwan\, on the DECam CCDs used to Select ELG Targets for eBOSS}
 
-We inject X simulated galaxies (i.e. randoms), at a density of X / deg$^2$ (X / brick) into the DR3-era CCDs. X\% of the injected galaxies are ELGs under the eBOSS ELG target selections, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. 
-
-We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG targets. The eBOSS ELG target densities are 200 and 240 targets / deg$^2$ in the NGC and SGC, respectively, so the density of simulated ELGs is at least X times higher than the target density for real ELGs.
+We inject 1.2M simulated galaxies (i.e. randoms), at a density of 2800 per deg$^2$ into the DR3-era CCDs for both the NGC and SGC regions. About 50\%, or 1400 per deg$^2$, of the injected galaxies pass the eBOSS NGC ELG target selection. The eBOSS ELG target densities in the NGC and SGC are 200 and 240 per deg$^2$, respectively, so our randoms galaxy sample (before source detection and \tractor, measurement) has 7-14x the density of the real galaxy sample. Fig. \ref{fig:number-density-eboss} shows the histograms of injected number density including footprint geometry and removing injected sources that are within 1\arcsec of an existing (real) source in the DR3-era \tractor\, catalogues. The maximum injected number density is 2800 per deg$^2$, but the mean is less than this ($\sim 2200$ per deg$^2$) because we remove simulated galaxies from our final catalogue that are within 1\arcsec of DR3-era \tractor\, sources. The distribution is bimodal because bricks at the edge of the footprint cannot receive as many sources, and areas are computed over the entire brick.
+%, so we are injecting, on average, X ELGs / deg$^2$ which will be reduced further by whichever \legacypipe detects and models. Heatmaps of the number density of simulated galaxies added to each brick are shown in Fig. \ref{fig:number-density-eboss}. 
 
 \begin{figure}
 %     \subfloat[Density (\#/deg$^2$) of Injected Sources\label{fig:number-density-eboss-ngc}]{
@@ -488,7 +487,7 @@ We inject 2400 galaxies / deg$^2$ in both footprints, of which X\% are eBOSS ELG
 \label{fig:number-density-eboss}
 \end{figure}
 
-Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies before and after adding galactic extinction (left column), the distribution of injected $\rhalf$ (right top), and the distribution of ellipticity components e1, e2 (right middle). The injected galaxies are 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev (see Fig. \ref{fig:number-per-type}). This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.
+Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the simulated galaxies before and after adding galactic extinction (left column), the distribution of injected $\rhalf$ (right top), and the distribution of ellipticity components e1, e2 (right middle). Galactic extinction is strongest for bluer wavelengths and it makes \gb\, magnitudes about 0.1 mag fainter. The mode for galaxy sizes  is $\rhalf  = 0.5$\arcsec because \tractor\, models most galaxies in our parents as type SIMP; ignoring the mode, the $\rhalf$ distribution extends from 0.2 to 2\arcsec with mean of 0.8\arcsec. These ellipticity components correspond uniform distributions for the position angle [0, 180) and minor to major axis ratio [0.2, 1.0]. Fig. \ref{fig:number-per-type} shows that \legacypipe\, is equally good at recovering exponential and \dev\, sources. The injected galaxies are 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev.
 
 \begin{figure}
 \begin{tabular}{cc}
@@ -503,7 +502,7 @@ Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the sim
       \includegraphics[width=0.45\columnwidth]{grz_hist_input_ext_z} &
       \\
 \end{tabular}
-\caption{(Left) \gb, \rband, \zb\, magnitude of injected sources (green) and after adding galactic extinction to them (blue). Extincted sources are fainter and the effect is stronger for bluer bands. (Right Top) $\rhalf$ of injected sources. The most common size is $\rhalf \sim 0.5$\arcsec. (Right Middle) Ellipticity components, e2 versus e1, of injected sources. These correspond to sampling from uniform distributions of position angles [0, 180) and minor to major axis ratios [0.2, 1.0].  
+\caption{(Left) \gb, \rband, \zb\, magnitude of injected sources (green) and after adding galactic extinction to them (blue). Extincted sources are fainter and the effect is stronger for bluer bands. (Right Top) $\rhalf$ of injected sources. (Right Middle) Ellipticity components, e2 versus e1, of injected sources.   
     \label{fig:input}}
 \end{figure}
 
@@ -513,25 +512,29 @@ Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the sim
  \label{fig:number-per-type}
 \end{figure}
 
-\legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that \legacypipe\, fails to detect (not-detected), fail target selection after \legacypipe\, measures them (fail-ts), or are removed by the {\tt{fracin}} cut (fracin-cut; see Section \ref{a:biases-systematics}). The distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box are shown in Fig. \ref{fig:rec-lost-contam-color}. Their \gb, \rband, \zb\, magnitude distributions are shown in Fig. \ref{fig:rec-lost-contam-mag}.
+\legacypipe\, modifies the simulated galaxy sample in three ways: true positives, false positives, and false negatives. True positives (recovered ELGs) are simulated ELGs that remain eBOSS ELGs using \legacypipe's measurements for them. False positives (contaminants) are simulated non-ELGs that pass target selection after \legacypipe\, measures them. False negatives (lost ELGs) are simulated ELGs that are either not detected (non-detections), have sufficient \tractor\, measurement error to fail target selection (measurement-error), or overlap CCD edge(s) and are removed by the {\tt{fracin}} cut (edge-overlap, see Section \ref{a:biases-systematics}). 
 
-\begin{figure}
- \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
- \caption{Distributions of recovered ELGs, contaminants, and lost ELGs in the eBOSS color box. (Left) true color of source. (Right) \tractor\, measured color. From top to bottom are recovered ELGs (blue), contaminants (green), lost ELGs fail-ts (cyan), lost ELGs not-detected (magenta), and lost ELGs fracin-cut (yellow). Most contaminants come from the upper left region of the color box. The primary reason for loosing ELGs is that the \tractor\, measurements fail target selection.}
- \label{fig:rec-lost-contam-color}
-\end{figure}
+Fig. \ref{fig:rec-lost-contam-mag} shows the \gb, \rband, \zb\, magnitude distributions for the recovered ELGs, contaminants, and lost ELGs. ELGs lost to measurement-error are, on average, the faintest of the simulated galaxies in \gb, \rband, and/or \zb. Contaminants and ELGs lost to non-detections and edge-overlap are a minority of the sample and have similar \gb, \rband, \zb\, mag distributions. Fig. \ref{fig:rec-lost-contam-color} shows the colors for recovered ELGs, contaminants, and lost ELGs. The top right panel shows the eBOSS color box. Most contaminants start at top left of the color box and scatter by $\sim 0.25$ mag to redder \rband-\zb\, colors. Measurement-error is the primary way that ELGs are lost. The colors of ELGs lost to non-detections are distributed over the full color box, so non-detection does not appear to correlate with color. ELGs lost to edge-overlap appear to have the same color distribution as full sample because whether or not a source overlaps a CCD edge does not depend on flux. 
 
 \begin{figure}
  \includegraphics[width=7 cm]{rec_lost_contam_grz}
- \caption{\gb, \rband, \zb\, magnitude histograms for recovered ELGs, contaminants, and lost ELGs, using the color scheme from Fig. \ref{fig:rec-lost-contam-color}. There are similar number of recovered ELGs and lost ELGs fail-ts for sources brighter than \gb < 22.5, \rband < 21.9, or \zb < 21.0, but there are many more lost ELGs fail-ts for fainter sources than that. The \gb, \rband, \zb\, distributions of contaminants, lost ELGs not-detected, and lost ELGs fracin-in are roughly uniform.}
+ \caption{\gb, \rband, \zb\, magnitude histograms for the recovered ELGs, contaminants, and lost ELGs. ELGs lost to measurement-error are, on average, the faintest of the simulated galaxies in \gb, \rband, and/or \zb. Contaminants and ELGs lost to non-detections and edge-overlap are a minority of the sample and have similar \gb, \rband, \zb\, mag distributions. 
+ %There are similar number of recovered ELGs and lost ELGs fail-ts for sources brighter than \gb < 22.5, \rband < 21.9, or \zb < 21.0, but there are many more lost ELGs fail-ts for fainter sources than that. The \gb, \rband, \zb\, distributions of contaminants, lost ELGs not-detected, and lost ELGs fracin-in are roughly uniform.
+ }
  \label{fig:rec-lost-contam-mag}
 \end{figure}
 
-The ELGs we inject have the appropriate correlations among brightness, shape, and redshift, so we can ask, how does \legacypipe\, modify the input n(z)? The top panel of Fig. \ref{fig:redshifts-recovered} shows that redshifts $< 0.2$ and $> 1.4$ are lost. The bottom panel shows the fraction of contaminants for different redshift bins.
+\begin{figure}
+ \includegraphics[width=\columnwidth]{rec_lost_contam_gr_rz}
+ \caption{Distributions of recovered ELGs, contaminants, and lost ELGs for the eBOSS color box, using the color scheme from Fig. \ref{fig:rec-lost-contam-mag}. (Left) true color of source. (Right) \tractor\, measured color. From top to bottom are recovered ELGs (blue), contaminants (green), ELGs lost to measurement-error (cyan), ELGs lost to non-detections (magenta), and ELGs lost to edge-overlap (yellow).}
+ \label{fig:rec-lost-contam-color}
+\end{figure}
+
+We inject ELGs with the appropriate correlations among brightness, shape, and redshift. Fig. \ref{fig:redshifts-recovered} shows how the injected n(z) is modified by \legacypipe. The top panel shows that redshifts $z < 0.2$ and $z > 1.4$ are lost. The bottom panel shows that contaminants primarily enter at three redshift ranges: $z < 0.25$, $0.5 < z < 0.75$, and $1.2 < z< 1.35$.
 
 \begin{figure}
  \includegraphics[width=0.7\columnwidth]{redshifts_recovered}
- \caption{(Top) PDF of redshift for injected ELGs (blue) and recovered ELGs (green). (Bottom) The fraction of the injected ELG sample that are recovered ELGs (green) compared to contaminants (magenta).}
+ \caption{How the injected n(z) is modified by \legacypipe. (Top) Redshift PDF for injected galaxies (blue) compared to what ends up in the \tractor\, catalogue created by \legacypipe\, (green). (Bottom) The fraction of sources in each redshift bin that are true eBOSS ELGs (green) and contaminants (magenta). Contaminants primarily enter at three redshift ranges: $z < 0.25$, $0.5 < z < 0.75$, and $1.2 < z< 1.35$.}
  \label{fig:redshifts-recovered}
 \end{figure}
 
@@ -606,7 +609,7 @@ The resolution of each weight-map is the brick-scale of $\sim 0.25x0.25$ deg. Fi
 \label{fig:weight-maps}
 \end{figure}
 
-In the Recovered map, lower fractions are generally due to less CCDs (see Fig. \ref{fig:ccds-eboss}); however, the Recovered NGC-ELG map is more complicated as lower fractions occur in regions with few CCDs (top right) as well as in regions with many CCDs (bottom left). The Anymask-Allmask-Ratio map shows that the \verb|anymask_grz = 0| cut always selects less ELGs than \verb|allmask_grz = 0| and that this reduction is enhanced where there are more CCDs (i.e. deeper imaging does not necessarily help). On average, \verb|anymask_grz = 0| is a 10\% effect, but in regions with more CCDs it can be as large as 40\%. Most concerning is that the 40\% effect also occurs over the entire footprint and that it appears to be periodic on scales of $\sim 1-5$ deg. Remember, the BAO signal at redshift 1 is $\sim 5$ deg. Using just eBOSS ELG data it is unclear how to propagate the affects of the \verb|anymask_grz = 0| cut, so \obiwan\, may prove crucial to eBOSS ELG science.
+In the Recovered map, lower fractions are generally due to less CCDs (see Fig. \ref{fig:ccds-eboss}); however, the Recovered NGC-ELG map is more complicated as lower fractions occur in regions with few CCDs (top right) as well as in regions with many CCDs (bottom left). The Recovered NGC-ELG map shows that only 20-40\% of true NGC ELGs end up passing eBOSS NGC ELG target selection. The fraction is so low because it includes all of the losses due to bright stars and bad-pixels, blending, and source detection and \tractor\, measurement error for galaxies with ELG brightness and color distributions. The Anymask-Allmask-Ratio map shows that the \verb|anymask_grz = 0| cut always selects less ELGs than \verb|allmask_grz = 0| and that this reduction is enhanced where there are more CCDs (i.e. deeper imaging does not necessarily help). On average, \verb|anymask_grz = 0| is a 10\% effect, but in regions with more CCDs it can be as large as 40\%. Most concerning is that the 40\% effect also occurs over the entire footprint and that it appears to be periodic on scales of $\sim 1-5$ deg. Remember, the BAO signal at redshift 1 is $\sim 5$ deg. Using just eBOSS ELG data it is unclear how to propagate the affects of the \verb|anymask_grz = 0| cut, so \obiwan\, may prove crucial to eBOSS ELG science.
 
 %The power of \obiwan\, is evident in Fig. \ref{fig:frac-recovered-eboss}. The heat maps show the fraction of injected galaxies that \legacypipe\, recovers. It is no longer necessary to determine N weights for up- and down-sampling using linear fits to galaxy correlations with N systematics. Fig. \ref{fig:frac-recovered-eboss} is the weights, per brick.
 
