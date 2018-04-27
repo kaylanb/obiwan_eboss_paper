@@ -837,7 +837,11 @@ We add a random RA and Dec coordinate, positions angle, minor to major axis rati
 \section{Biases and Systematics in \legacypipe}
 \label{a:biases-systematics}
 
-This section identifies the bad sources and other biases and systematics that we remove from our \obiwan\, eBOSS data set to arrive at the figures presented in Section \ref{sec:biases-systematics}. Fig. \ref{fig:dflux-systematic} shows the number of standard deviations between true flux and \tractor\, measurement before bad sources at $x=0$ are removed or the mean is subtracted. The bad sources are cleanly removed with {\tt{fracin}} $< 0.2$ in the \tractor catalogues and are reported as ``not real'' by the Legacy Survey\footnote{\url{http://legacysurvey.org/dr6/files}}. 
+This section describes how we clean our \obiwan\, eBOSS data. 
+%t to arrive at the figures presented in Section \ref{sec:biases-systematics} identifies the bad sources and other biases and systematics that we remove from our . 
+Fig. \ref{fig:dflux-systematic} shows the number of standard deviations ($N_\sigma$) between true flux and \tractor\, measurement without cleaning. The top left panel shows that there is an offset of a few standard deviations and that there are many sources with $N_sigma \approx 0$. The offset is most likely due to imperfect sky subtraction (see Section \ref{}). The sources with $N_sigma \approx 0$ are sources that lie on top of CCD edges(s). They are linearly separable by {\tt{fracin}} $< 0.2$ (top right panel), which is the fraction of each source that overlaps its CCD(s). The bottom left panel shows the $N_sigma \approx 0$ distribution for {\tt{fracin}} $< 0.2$ sources. The \zb-band measurements are particularly accurate. The bottom right panel shows the $N_sigma \approx 0$ distribution with {\tt{fracin}} $< 0.2$ sources removed. 
+
+Why are \tractor's measurements very accurate ($N_sigma \approx 0$) for {\tt{fracin}} $< 0.2$ sources? To test this we injected tens of galaxies onto the edges of 3 \gb, \rband, \zb CCDs, and found that less than 20\% of the source profile is enough data for \tractor\, to accurately reconstruct the full profile. Because so much of the source falls off the CCD, the measurement suffers negligibly from imperfect sky subtraction and \tractor's measurement is more accurate than for the same source fully contained by the CCD. Note, the Legacy Surveys website\footnote{\url{http://legacysurvey.org/dr6/files}} says that \tt{fracin}} is "near unity for real sources``. This statement is incorrect.
 
 \begin{figure}
      \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
@@ -858,6 +862,8 @@ This section identifies the bad sources and other biases and systematics that we
 \caption{The input distribution of \tractor\,, truth residuals (top left) and the bad sources and systematic offsets we remove to arrive at the true distribution of \tractor\,, truth residuals (bottom right). (Top Left) Number of standard deviations including bad sources at x = 0, and systematic offset to x < 0. (Top Right) The excess of sources with flux residual of zero are bad sources. We find that these have {\tt{fracin}} $< 0.2$ in the \tractor\, catalogues and are linearly separable from all other sources. (Bottom Left) Number of standard deviations for bad sources ({\tt{fracin}} $< 0.2$) (Bottom Right) Number of standard deviations after removing bad sources and subtracting the mean.}
 \label{fig:dflux-systematic}
 \end{figure}
+
+In principle, we should include the edge-sources in our analysis, but we drop them because we are interested in \legacypipe\, biases and systematics for a representative source, not the special case of edge-sources.
 
 Fig. \ref{fig:safe-to-remove} shows that it is safe to remove the sources with {\tt{fracin}} $< 0.2$. Their \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions are nearly identical to that of {\tt{fracin}} $\ge 0.2$ sources. And this cut only removes about 11\% of the sample, independent of whether the source is truly exponential or \dev.
 
