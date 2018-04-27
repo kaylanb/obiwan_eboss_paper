@@ -580,7 +580,7 @@ By estimating $\sigma_{\rm{w(\theta), Jack}}^2$ with Jackknife sampling we may b
 
 \subsection{Weight-based Methods}
 
-Although computing the angular correlation function with \obiwan\, does not require weight-maps, \obiwan\, can produce various weight maps for use by future map-based studies. The maps could also be used to create mock data sets from N-body simulations of the evolution of dark matter clustering in the universe. For example, the variance of our angular correlation function measurement could be estimated from the mocks, instead of with Jackknife sampling. 
+Although computing the angular correlation function with \obiwan\, does not require weight-maps, various weight maps can be derived from \obiwan's results. The maps can be used by future map-based studies or to create ``mocks" (i.e. mock data sets from N-body simulations for the evolution of dark matter in the universe) for estimating the variance of arbitrary ACF measurements. 
 
 We limit ourselves to three weight maps that might be of interest to future eBOSS ELG studies: 
 \begin{itemize}
@@ -602,11 +602,11 @@ The resolution of each weight-map is the brick-scale of $\sim 0.25x0.25$ deg. Fi
      \subfloat[Anymask-Allmask-Ratio\label{a}]{
        \includegraphics[width=\columnwidth]{heatmap_anymask_allmask_ratio_ngc_elgs_eboss_ngc}
      }
-\cprotect\caption{Weight-maps of imaging systematics that may be useful for future studies that remove imaging systematics with map-based methods. (Top) The fraction of all injected sources that \legacypipe\, detects and measures. (Middle) The fraction of true NGC eBOSS ELGs that \legacypipe\, detects and measures and that have \tractor\, measurements that pass NGC eBOSS ELG target selection. (Bottom) Using \tractor\, measurements, the ratio of the number of sources that pass NGC eBOSS ELG target selection using \verb|allmask_grz = 0| to the number of when using \verb|anymask_grz = 0|. }
+\cprotect\caption{Weight-maps of imaging systematics that may be useful for future studies that remove imaging systematics with map-based methods. (Top) The fraction of all injected sources that \legacypipe\, detects and measures. (Middle) The fraction of true NGC eBOSS ELGs that \legacypipe\, detects and measures and that have \tractor\, measurements that pass NGC eBOSS ELG target selection. (Bottom) Using \tractor\, measurements, the ratio of the number of sources that pass NGC eBOSS ELG target selection using \verb|allmask_grz = 0| to the number of when using \verb|anymask_grz = 0|.}
 \label{fig:weight-maps}
 \end{figure}
 
-In the Recovered map, higher fractions are generally due to more CCDs (see Fig. \ref{fig:ccds-eboss}); however, in Recovered NGC-ELGs, fewer eBOSS NGC ELGs are selected based on \tractor\, measurements in regions with many and few CCDs, respectively. The Anymask-Allmask-Ratio map shows that the \verb|anymask_grz = 0| cut removes more sources when there are more CCDs (i.e. deeper imaging). It can be up to a 40\% effect but is less than a $10$\% effect on average.
+In the Recovered map, lower fractions are generally due to less CCDs (see Fig. \ref{fig:ccds-eboss}); however, the Recovered NGC-ELG map is more complicated as lower fractions occur in regions with few CCDs (top right) as well as in regions with many CCDs (bottom left). The Anymask-Allmask-Ratio map shows that the \verb|anymask_grz = 0| cut always selects less ELGs than \verb|allmask_grz = 0| and that this reduction is enhanced where there are more CCDs. On average, It can be up to a 40\% effect but is less than a $10$\% effect on average.
 
 %The power of \obiwan\, is evident in Fig. \ref{fig:frac-recovered-eboss}. The heat maps show the fraction of injected galaxies that \legacypipe\, recovers. It is no longer necessary to determine N weights for up- and down-sampling using linear fits to galaxy correlations with N systematics. Fig. \ref{fig:frac-recovered-eboss} is the weights, per brick.
 
