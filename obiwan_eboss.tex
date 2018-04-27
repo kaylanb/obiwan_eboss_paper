@@ -613,10 +613,55 @@ In the Recovered map, lower fractions are generally due to less CCDs (see Fig. \
 
 %The power of \obiwan\, is evident in Fig. \ref{fig:frac-recovered-eboss}. The heat maps show the fraction of injected galaxies that \legacypipe\, recovers. It is no longer necessary to determine N weights for up- and down-sampling using linear fits to galaxy correlations with N systematics. Fig. \ref{fig:frac-recovered-eboss} is the weights, per brick.
 
-\subsection{Biases and Systematics in \legacypipe}
-\label{sec:biases-systematics}
+\section{\legacypipe\, Biases and Systematics}
 
-We now present high impact biases and systematics that we find in \legacypipe\, using our \obiwan\, eBOSS runs. See Section \ref{a:biases-systematics} for more detail. Fig. \ref{fig:confusion} shows that \tractor\, is biased towards EXP sources. About 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally \citep{obiwanMethods}.
+Our \obiwan\, eBOSS data reveal many biases and systematics in the \legacypipe\, pipeline. These are high impact items for the Legacy Surveys, but they are not relevant to this study. We encourage the interested reader to study Sections \ref{a:biases-systematics} and \ref{a:imperfect-sky-edge-sources}. 
+
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+\red{ADD TEXT}
+%\begin{itemize}
+%\item this is the way to assess bias/systematics when doing joint analysis of datasets from multiple telescopes
+%\end{itemize}
+
+
+\section*{Acknowledgements} 
+\label{sec:ack}
+
+Funding for the DEEP2 Galaxy Redshift Survey has been provided by NSF grants AST-95-09298, AST-0071048, AST-0507428, and AST-0507483 as well as NASA LTSA grant NNG04GC89G.
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
+
+% The best way to enter references is to use BibTeX:
+
+\bibliographystyle{mnras}  %{mnras} if file is mnras.bst
+\bibliography{bib} % {bib} if file is bib.bib
+
+
+% Alternatively you could enter them by hand, like this:
+% This method is tedious and prone to error if you have lots of references
+%\begin{thebibliography}{99}
+%\bibitem[\protect\citeauthoryear{Author}{2012}]{Author2012}
+%Author A.~N., 2013, Journal of Improbable Astronomy, 1, 1
+%\bibitem[\protect\citeauthoryear{Others}{2013}]{Others2013}
+%Others S., 2012, Journal of Interesting Stuff, 17, 198
+%\end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+\section{\legacypipe\, Biases and Systematics}
+\label{a:biases-systematics}
+
+This section describes biases and systematics that we find in \legacypipe\, using our \obiwan\, eBOSS data. Fig. \ref{fig:confusion} shows that \tractor\, is biased towards EXP sources. About 95\% of truly exponential sources are modeled as exponential, compared to only 20\% of truly \dev\, being modeled as \dev. This bias is surprisingly because \tractor\, model selection penalizes EXP and DEV sources equally \citep{obiwanMethods}.
 %Which simulated ELGs does \legacypipe\, detect and model? Are there biases and systematics? How do the \tractor\, measured properties differ from input truth? 
 
 \begin{figure}
@@ -625,7 +670,7 @@ We now present high impact biases and systematics that we find in \legacypipe\, 
  \label{fig:confusion}
 \end{figure}
 
-Fig. \ref{fig:tractor-uncertainty} shows the number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux, $\rhalf$, and ellipticity e1, e2 measurements. There is a large systematic offset between \tractor\, and truth for \gb, \rband, \zb\, flux and $\rhalf$. \tractor\, fluxes are too faint and $\rhalf$ too large. This is most likely due to improper sky subtraction (see Section \ref{a:biases-systematics}). \tractor ivar underestimates the true error on all measured quantities: by 1.75-2x for \gb, \rband, \zb\, flux, 3-5x for $\rhalf$, and 2.7-3x for e1, e2. 
+Fig. \ref{fig:tractor-uncertainty} shows the number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux, $\rhalf$, and ellipticity e1, e2 measurements. There is a large systematic offset between \tractor\, and truth for \gb, \rband, \zb\, flux and $\rhalf$. \tractor\, fluxes are too faint and $\rhalf$ too large. This is most likely due to improper sky subtraction (see Section \ref{a:imperfect-sky-edge-sources}). \tractor ivar underestimates the true error on all measured quantities: by 1.75-2x for \gb, \rband, \zb\, flux, 3-5x for $\rhalf$, and 2.7-3x for e1, e2. 
 
 \begin{figure*}
 \begin{center}
@@ -676,51 +721,61 @@ We say \legacypipe\, recovers a injected source when there is exactly one \tract
  \label{fig:delta-radec}
 \end{figure}
 
+Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources. We find that this is not a consequence of source size. Fig. \ref{fig:rhalf-recovered} shows the distribution of $\rhalf$ for sources classified as PSF, SIMP, EXP, and DEV. Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources, but since true $\rhalf$ distributions for type EXP and DEV are so similar, it is unlikely that the bias is due to source size. In fact, Fig. \ref{fig:rhalf-recovered} shows that for $\rhalf > 1.5$\arcsec the chance of recovery by \legacypipe\, drops to and fluctuates about 50\%. And this is independent of whether classifies the source as EXP or DEV.
+
+\begin{figure}
+ \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
+ \caption{PDFs of true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (top) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec (Fig. \ref{fig:input}), and this is also the most common recovered source size independent of \tractor\, type (not just SIMP). PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. }
+ \label{fig:rhalf-input}
+\end{figure}
+
+\begin{figure}
+ \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
+ \caption{How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery drops to and fluctuates about 50\%.}
+ \label{fig:rhalf-recovered}
+\end{figure}
+
 
 %\obiwan\, provides a \tractor-independent measurement for depth. It is the magnitude of the source for which the chance of recovery (i.e. detecting it then deciding that it is a bonafide astrophysical source) is 50\% . Fig. \ref{fig:fraction-recovered} shows the fraction of exponential $\rhalf=0.5$\arcsec galaxies that are recovered by \legacypipe\, versus source magnitude for subset 60. The fraction is never less than 0.5 so subset 60 is more than 0.5 mag deeper than full-depth in all bands. This is good for our images of the COSMOS region, but bad for DECaLS because any conclusions that the DECaLS Team has derived from subset 60 will be too optimistic. 
 
 % We can also ask, what magnitude source in these images becomes a 5\sigma detection with \tractor? (this depends on tractor flux ivar so is not independent of tractor)
 
 
-\section{Conclusions}
-\label{sec:conclusions}
+\section{\legacypipe\, Sky Subtraction and Edge-Sources}
+\label{a:imperfect-sky-edge-sources} 
+%t to arrive at the figures presented in Section \ref{sec:biases-systematics} identifies the bad sources and other biases and systematics that we remove from our . 
+Fig. \ref{fig:dflux-systematic} shows the number of standard deviations ($N_\sigma$) between true flux and \tractor\, measurement. The top left panel shows that there is an offset of a few standard deviations and that there are many sources with $N_\sigma \approx 0$. The offset is most likely due to imperfect sky subtraction. \legacypipe\, models and subtracts the background sky with a cubic-spline fit to the entire CCD. The spline model should be insensitive to sufficiently bright sources but recently it was discovered that this was not the case. An improved sky model was used for DR6\footnote{\url{http://legacysurvey.org/dr6/description/}}, but we are stuck with the pre-DR6 model because we are simulating DR3-era \tractor\, catalogues. The sources with $N_\sigma \approx 0$ are sources that lie on top of CCD edges(s). They are linearly separable by {\tt{fracin}} $< 0.2$ (top right panel), which is the fraction of each source that overlaps its CCD(s). The bottom left panel shows the $N_\sigma \approx 0$ distribution for {\tt{fracin}} $< 0.2$ sources. The \zb-band measurements are particularly accurate. The bottom right panel shows the $N_\sigma$ distribution with {\tt{fracin}} $< 0.2$ sources removed and the mean subtracted. 
 
-\red{ADD TEXT}
-%\begin{itemize}
-%\item this is the way to assess bias/systematics when doing joint analysis of datasets from multiple telescopes
-%\end{itemize}
+Why are \tractor's measurements very accurate ($N_\sigma \approx 0$) for {\tt{fracin}} $< 0.2$ sources? To test this we injected tens of galaxies onto the edges of 3 \gb, \rband, \zb\, CCDs, and found that less than 20\% of the source profile is enough data for \tractor\, to accurately reconstruct the full profile. Because so much of the source falls off the CCD, the measurement suffers negligibly from imperfect sky subtraction and \tractor's measurement is more accurate than for the same source fully contained by the CCD. Note, the Legacy Surveys website\footnote{\url{http://legacysurvey.org/dr6/files}} says that {\tt{fracin}} is``near unity for real sources". This statement is incorrect.
 
+\begin{figure}
+     \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_notsubmean}
+     }
+     \hfill
+     \subfloat[Bad sources are linearly separable: {\tt{fracin}} $< 0.2$\label{fig:fracin-2dhist}]{
+       \includegraphics[width=0.45\columnwidth]{fracin_vs_numstddev_2dhist}
+     }
+     \hfill
+     \subfloat[Bad sources only\label{fig:fracin-dflux}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_keep_bad_020_notsubmean}
+     }
+     \hfill
+     \subfloat[Distribution after removing bad sources and subtracting the mean\label{fig:fracin-removed}]{
+       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
+     }
+\caption{The number of standard deviations ($N_\sigma$) between true flux and \tractor\, measurement. (Top Left) There is an offset of a few standard deviations and there are many sources with $N_\sigma \approx 0$. The offset is most likely due to imperfect sky subtraction, and the $N_\sigma \approx 0$ sources are sources that lie on top of CCD edges(s). (Top Right) Sources with $N_\sigma \approx 0$ linearly separable by {\tt{fracin}} $< 0.2$. (Bottom Left) The $N_\sigma$ distribution for {\tt{fracin}} $< 0.2$ sources. (Bottom Right) The $N_\sigma$ distribution with {\tt{fracin}} $< 0.2$ sources removed and the mean subtracted.}
+\label{fig:dflux-systematic}
+\end{figure}
 
-\section*{Acknowledgements} 
-\label{sec:ack}
+In principle, we should include the edge-sources in our analysis, but we drop them because we are interested in \legacypipe\, biases and systematics for the average source, not the relatively small sample of edge-sources. Fig. \ref{fig:safe-to-remove} shows that we do not bias our analysis by removing the edge-sources. The {\tt{fracin}} $< 0.2$ and {\tt{fracin}} $\ge 0.2$ sources have similar \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions. The bar plot shows that $\sim 11$\% of truly exponential and \dev\, galaxies, respectively, are removed by the {\tt{fracin}} $< 0.2$ cut.
 
-Funding for the DEEP2 Galaxy Redshift Survey has been provided by NSF grants AST-95-09298, AST-0071048, AST-0507428, and AST-0507483 as well as NASA LTSA grant NNG04GC89G.
- 
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+ \includegraphics[width=0.8\columnwidth]{hist_all_quantities_fracin_cut}
+ \caption{(Histograms) The \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions for {\tt{fracin}} $< 0.2$ and {\tt{fracin}} $\ge 0.2$ sources. (Bar Plot) Fraction of injected exponential and \dev\, galaxies that are recovered by \legacypipe\, (orange) or remain after \legacypipe\, recovery and the cut on {\tt{fracin}} $< 0.2$ (blue). About $\sim 11$\% of truly exponential and \dev\, galaxies, respectively, are removed by the {\tt{fracin}} $< 0.2$ cut.}
+ \label{fig:safe-to-remove}
+\end{figure}
 
-%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
-
-% The best way to enter references is to use BibTeX:
-
-\bibliographystyle{mnras}  %{mnras} if file is mnras.bst
-\bibliography{bib} % {bib} if file is bib.bib
-
-
-% Alternatively you could enter them by hand, like this:
-% This method is tedious and prone to error if you have lots of references
-%\begin{thebibliography}{99}
-%\bibitem[\protect\citeauthoryear{Author}{2012}]{Author2012}
-%Author A.~N., 2013, Journal of Improbable Astronomy, 1, 1
-%\bibitem[\protect\citeauthoryear{Others}{2013}]{Others2013}
-%Others S., 2012, Journal of Interesting Stuff, 17, 198
-%\end{thebibliography}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
-
-\appendix
 
 \section{Injecting Realistic ELGs}
 
@@ -834,56 +889,7 @@ We draw redshifts from n(z), dropping those outside the allowed redshift range [
 
 We add a random RA and Dec coordinate, positions angle, minor to major axis ratio to each of the N draws. We assign an id saying where the brightness and shape information came from, which we call \verb|id_sample|. This is the SDSS-ID (\verb|plate-mjd-fiberid|) if from the EXP or DEV eBOSS samples or the \tractor-ID (\verb|brickid-objid|) if from the  EXP or DEV DR3-DEEP2 samples. 
 
-\section{Biases and Systematics in \legacypipe}
-\label{a:biases-systematics}
 
-This section describes additional biases and systematics in our \obiwan\, eBOSS data. 
-%t to arrive at the figures presented in Section \ref{sec:biases-systematics} identifies the bad sources and other biases and systematics that we remove from our . 
-Fig. \ref{fig:dflux-systematic} shows the number of standard deviations ($N_\sigma$) between true flux and \tractor\, measurement. The top left panel shows that there is an offset of a few standard deviations and that there are many sources with $N_\sigma \approx 0$. The offset is most likely due to imperfect sky subtraction. \legacypipe\, models and subtracts the background sky with a cubic-spline fit to the entire CCD. The spline model should be insensitive to sufficiently bright sources but recently it was discovered that this was not the case. An improved sky model was used for DR6\footnote{\url{http://legacysurvey.org/dr6/description/}}, but we are stuck with the pre-DR6 model because we are simulating DR3-era \tractor\, catalogues. The sources with $N_\sigma \approx 0$ are sources that lie on top of CCD edges(s). They are linearly separable by {\tt{fracin}} $< 0.2$ (top right panel), which is the fraction of each source that overlaps its CCD(s). The bottom left panel shows the $N_\sigma \approx 0$ distribution for {\tt{fracin}} $< 0.2$ sources. The \zb-band measurements are particularly accurate. The bottom right panel shows the $N_\sigma$ distribution with {\tt{fracin}} $< 0.2$ sources removed and the mean subtracted. 
-
-Why are \tractor's measurements very accurate ($N_\sigma \approx 0$) for {\tt{fracin}} $< 0.2$ sources? To test this we injected tens of galaxies onto the edges of 3 \gb, \rband, \zb\, CCDs, and found that less than 20\% of the source profile is enough data for \tractor\, to accurately reconstruct the full profile. Because so much of the source falls off the CCD, the measurement suffers negligibly from imperfect sky subtraction and \tractor's measurement is more accurate than for the same source fully contained by the CCD. Note, the Legacy Surveys website\footnote{\url{http://legacysurvey.org/dr6/files}} says that {\tt{fracin}} is``near unity for real sources". This statement is incorrect.
-
-\begin{figure}
-     \subfloat[Distribution including bad sources and systematic offset\label{fig:fracin-present}]{
-       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_notsubmean}
-     }
-     \hfill
-     \subfloat[Bad sources are linearly separable: {\tt{fracin}} $< 0.2$\label{fig:fracin-2dhist}]{
-       \includegraphics[width=0.45\columnwidth]{fracin_vs_numstddev_2dhist}
-     }
-     \hfill
-     \subfloat[Bad sources only\label{fig:fracin-dflux}]{
-       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_keep_bad_020_notsubmean}
-     }
-     \hfill
-     \subfloat[Distribution after removing bad sources and subtracting the mean\label{fig:fracin-removed}]{
-       \includegraphics[width=0.45\columnwidth]{num_std_dev_gaussfit_flux_bytype_all_keepwhatputin_fracin_020}
-     }
-\caption{The number of standard deviations ($N_\sigma$) between true flux and \tractor\, measurement. (Top Left) There is an offset of a few standard deviations and there are many sources with $N_\sigma \approx 0$. The offset is most likely due to imperfect sky subtraction, and the $N_\sigma \approx 0$ sources are sources that lie on top of CCD edges(s). (Top Right) Sources with $N_\sigma \approx 0$ linearly separable by {\tt{fracin}} $< 0.2$. (Bottom Left) The $N_\sigma$ distribution for {\tt{fracin}} $< 0.2$ sources. (Bottom Right) The $N_\sigma$ distribution with {\tt{fracin}} $< 0.2$ sources removed and the mean subtracted.}
-\label{fig:dflux-systematic}
-\end{figure}
-
-In principle, we should include the edge-sources in our analysis, but we drop them because we are interested in \legacypipe\, biases and systematics for the average source, not the relatively small sample of edge-sources. Fig. \ref{fig:safe-to-remove} shows that we do not bias our analysis by removing the edge-sources. The {\tt{fracin}} $< 0.2$ and {\tt{fracin}} $\ge 0.2$ sources have similar \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions. The bar plot shows that $\sim 11$\% of truly exponential and \dev\, galaxies, respectively, are removed by the {\tt{fracin}} $< 0.2$ cut.
-
-\begin{figure}
- \includegraphics[width=0.8\columnwidth]{hist_all_quantities_fracin_cut}
- \caption{(Histograms) The \gb, \rband, \zb\, magnitude, $\rhalf$, and redshift distributions for {\tt{fracin}} $< 0.2$ and {\tt{fracin}} $\ge 0.2$ sources. (Bar Plot) Fraction of injected exponential and \dev\, galaxies that are recovered by \legacypipe\, (orange) or remain after \legacypipe\, recovery and the cut on {\tt{fracin}} $< 0.2$ (blue). About $\sim 11$\% of truly exponential and \dev\, galaxies, respectively, are removed by the {\tt{fracin}} $< 0.2$ cut.}
- \label{fig:safe-to-remove}
-\end{figure}
-
-Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources. We find that this is not a consequence of source size. Fig. \ref{fig:rhalf-recovered} shows the distribution of $\rhalf$ for sources classified as PSF, SIMP, EXP, and DEV. Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources, but since true $\rhalf$ distributions for type EXP and DEV are so similar, it is unlikely that the bias is due to source size. In fact, Fig. \ref{fig:rhalf-recovered} shows that for $\rhalf > 1.5$\arcsec the chance of recovery by \legacypipe\, drops to and fluctuates about 50\%. And this is independent of whether classifies the source as EXP or DEV.
-
-\begin{figure}
- \includegraphics[width=0.7\columnwidth]{hist_true_rhalf_by_type}
- \caption{PDFs of true $\rhalf$ for sources that \legacypipe\, classifies as PSF, SIMP (top) and EXP, DEV (bottom). The most common injected source size is $\rhalf \sim 0.5$\arcsec (Fig. \ref{fig:input}), and this is also the most common recovered source size independent of \tractor\, type (not just SIMP). PSF and SIMP sources are generally smaller than EXP and DEV. However, type DEV sources have a higher fraction of small ($rhalf < 0.5$\arcsec) sources than SIMP or EXP. The true $\rhalf$ distributions for type DEV and EXP are otherwise very similar, which means that the larger \tractor\, errors on $\rhalf$ for type DEV (see Fig. \ref{fig:tractor-uncertainty}) are not due to source size. SIMP sources have the highest fraction of $\rhalf \sim 0.5$\arcsec sources sizes, which probably explains why \tractor\, errors on $\rhalf$ and e1, e2 can be so small. }
- \label{fig:rhalf-input}
-\end{figure}
-
-\begin{figure}
- \includegraphics[width=0.7\columnwidth]{fraction_recovered_vs_rhalf}
- \caption{How the fraction of sources recovered by \legacypipe\, depends on the size of the source. $\rhalf \sim 1.5$\arcsec is the critical size after which the chance of recovery drops to and fluctuates about 50\%.}
- \label{fig:rhalf-recovered}
-\end{figure}
 
 %\begin{figure}
 % \includegraphics[width=\columnwidth]{grz_hist_by_type}
@@ -934,7 +940,7 @@ Fig. \ref{fig:confusion} shows that \legacypipe\, is biased towards EXP sources.
 \section{Data Products}
 \label{sec:data-products}
 
-TRANSFER DATA TO eBOSS PROJECT DISK SPACE SAY HOW PEOPLE CAN ACCESS IT
+All data products are available at The National Energy Research Scientific Computing Center (NERSC), on Cori SCRATCH: \verb|/global/cscratch1/sd/kaylanb/obiwan_out/eboss_elg|
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
