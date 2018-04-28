@@ -508,7 +508,7 @@ Fig. \ref{fig:input} shows the \gb, \rband, and \zb\, mag histograms for the sim
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{number_per_type_input_rec_meas}
- \caption{Barplot comparing the number of galaxies injected versus recovered by \legacypipe. The injected population is 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.}
+ \caption{Barplot comparing the number of injected galaxies to the number recovered by \legacypipe. The injected population is 89\% exponential and 11\% \dev\,, and \legacypipe\, recovers 76\% of the exponentials and 73\% of the \dev. This suggests that \legacypipe\, is equally good at recovering exponential and \dev\, sources.}
  \label{fig:number-per-type}
 \end{figure}
 
@@ -691,9 +691,9 @@ Fig. \ref{fig:tractor-uncertainty} shows the number of standard deviations away 
       \\
 \end{tabular}
 \end{center}
-\caption{Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux, $\rhalf$, and ellipticity e1, e2 measurements. There is a large systematic offset between \tractor\, and truth for \gb, \rband, \zb\, flux and $\rhalf$. \tractor\, fluxes are too faint and $\rhalf$ too large. We remove the offset subtracting the mean and believe that this is due to improper sky subtraction (see Section \ref{a:biases-systematics}). (Left) \tractor's \gb, \rband, \zb\, flux errors are 1.75-2x larger than \tractor ivar implies and appear Gaussian distributed. (Middle) \tractor\, $\rhalf$ for sources classified as EXP and DEV. \tractor\, $\rhalf$ errors appear Gaussian distributed in both cases, but are 3x larger than \tractor's ivar implies for EXP sources and 5x larger for DEV sources. 
+\caption{Number of standard deviations away from truth of \tractor's \gb, \rband, \zb\, flux, $\rhalf$, and ellipticity e1, e2 measurements. There is a large systematic offset between \tractor\, and truth for flux and $\rhalf$, which we remove by subtracting the mean. (Left) \tractor's \gb, \rband, \zb\, flux errors are 1.75-2x larger than \tractor ivar implies and appear Gaussian distributed. (Middle) \tractor\, $\rhalf$ for sources classified as EXP and DEV. \tractor\, $\rhalf$ errors appear Gaussian distributed in both cases, but are 3x larger than \tractor's ivar implies for EXP sources and 5x larger for DEV sources. 
 %SIMP, \tractor's ivar is now an overestimate by a factor of 4. Most sources have $\rhalf \sim 0.5$\arcsec, but not all (Fig. \ref{fig:rhalf-by-type}). 
-(Right) \tractor ellipticity (e1, e2) errors for EXP and DEV sources. Unlike \gb, \rband, \zb\, flux and $\rhalf$, the systematic offset is very small and probably due to chance variation. The e1, e2 errors are identical and appear Gaussian distributed. \tractor\, ivar underestimates the true error by 3x and 2.7x for EXP and DEV sources. 
+(Right) \tractor\, ellipticity (e1, e2) errors for EXP and DEV sources. Unlike \gb, \rband, \zb\, flux and $\rhalf$, the systematic offset is very small and probably due to chance variation. The e1, e2 errors are identical and appear Gaussian distributed. \tractor\, ivar underestimates the true error by 3x and 2.7x for EXP and DEV sources. 
     \label{fig:tractor-uncertainty}}
 \end{figure*}
 
