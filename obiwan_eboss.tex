@@ -621,11 +621,14 @@ Our \obiwan\, eBOSS data reveal many biases and systematics in the \legacypipe\,
 \section{Conclusions}
 \label{sec:conclusions}
 
-\red{ADD TEXT}
-%\begin{itemize}
-%\item this is the way to assess bias/systematics when doing joint analysis of datasets from multiple telescopes
-%\end{itemize}
-
+We summarize our conclusions as follows
+\begin{enumerate}
+\item We proposed a new method for removing imaging systematics from galaxy survey data that does not  require maps of imaging systematics or foregrounds, and that removes any biases and systematics in the pipeline producing the LSS catalogue.
+\item We applied to this method to the eBOSS ELG sample using the \obiwan\, code (Burleigh et al. prepa). The resulting angular correlation function reproduces the CFHT-BOSS-DEEP2 correlation function \citep{corrfuncJohan} for $\theta < 1$ deg, and extends the correlation function to $\theta < 5$ deg.
+\item We determined the \gb, \rband, \zb-mag distributions for recovered ELGS (true ELGs that remain ELGs after source detection and measurement), contaminants (non-ELGs that pass target selection after detection and measurment), and lost ELGs (ELGs that are not detected, fail target selection after measurement, or overlap CCD edges). We also investigated how much scattering occurs ($\sim 0.25$ mag) into and out of the eBOSS ELG color box and \gb-band mag limits. 
+\item We provide weight-maps of imaging systematics that can be used by map-based methods to remove imaging systematics and reproduce our results. This includes a map of the ratio of the number of sources that pass ELG target selection using \verb|allmask_grz = 0| to the number when using \verb|anymask_grz = 0|, a result that may be crucial to eBOSS ELG science.
+\item Finally, we identified numerous biases and systematics in the Legacy Surveys image reduction pipeline, \legacypipe. The highest impact ones are that \legacypipe underestimates the uncertainty on \gb, \rband, and \zb\, flux by a factor of 1.75-2, the uncertainty on $\rhalf$ by a factor of 3-5, and the uncertainty on e1 and e2 by a factor of 2.7-3. 
+\end{enumerate}
 
 \section*{Acknowledgements} 
 \label{sec:ack}
