@@ -284,7 +284,7 @@ Astronomers perform galaxy surveys to measure how galaxies cluster at different 
 Removing biases and systematics due to the imaging data (imaging systematics) is critical for measuring unbiased clustering statistics like the angular correlation function. Map-based methods, such as template subtraction and mode projection \citep{biasInTemplateMethod}, have successfully removed imaging systematics from the SDSS, WiggleZ, BOSS, and eBOSS surveys; however, it is unlikely that these methods, in their current state, will be able to handle the complexities of future and ongoing galaxy surveys, such as the Legacy Surveys. Map-based methods use a pixelization scheme, such as \healpix\, \citep{healpix}, to subdivide the sky into equal-area pixels and then compute various per-pixel quantities: the number of galaxies in the LSS catalogue (data), the average seeing, sky brightness, exposure time, etc. (imaging meta-data) and galactic extinction (foregrounds). The non-data maps are potential imaging systematics and are turned into pixel weight maps (in configuration space) or mode weights (in Fourier space). The weights mimic how the angular selection function samples the true distribution of galaxies yielding the observed LSS catalogue \citep{biasInTemplateMethod}.
 % the weights can be chained together by multiplying the weights for all systematics or can be fit to all systematics simultaneously
 
-The two most popular map-based methods are ``template subtraction" \citep{sdss1Systematics, myers06, sdss8Systematics, sdss8Companion, sdss9Systematics, sdss12Systematics, wigglezSelectionFunc, delubacSystematics, qsoDepthExtinction, prakashRegressionTech, myersRegressionTech, elvinpoole} and ``model projection" \citep{rybicki92, tegmark98, uros04, biasInTemplateMethod, leistedt13}. Template subtraction models how the number of galaxies depends on each systematic and subtracts the model from each mode of the data (in Fourier space) or divides by the model (in pixel space). \red{Say some stuff about overfitting}. To prevent overfitting, only the systematics maps with the largest cross correlations with the data are modeled. Mode projection treats the systematic maps as adding noise to each mode in Fourier space or pixels in configuration space, so that values in the data covariance matrix are increased for modes where each systematic map is large. It robustly models the impact of the linear combination of the systematics, but does not include non-linear effects from the systematics. 
+The two most popular map-based methods are ``template subtraction" \citep{sdss1Systematics, myers06, sdss8Systematics, sdss8Companion, sdss9Systematics, sdss12Systematics, wigglezSelectionFunc, delubacSystematics, qsoDepthExtinction, prakashRegressionTech, myersRegressionTech, elvinpoole} and ``model projection" \citep{rybicki92, tegmark98, uros04, biasInTemplateMethod, leistedt13}. Template subtraction is a model for how the number of galaxies depends on each systematic. In pixel space, the data is divided by the model; in Fourier space, the model is subtracted from the data. To avoid modeling chance correlations, only the systematic maps with the largest data cross correlation are modeled. Mode projection treats the systematic maps as adding noise to each mode in Fourier space or pixels in configuration space, so that values in the data covariance matrix are increased for modes where each systematic map is large. It robustly models the impact of the linear combination of the systematics, but does not include non-linear effects from the systematics. 
 % biasInTemplateMethod for why template subtraction method overfits
 % leistedt13 is best overview for the mode projection method
 % they both do "mode projection" because the pixelized maps are a summation of basis functions (usually spherical harmonics) in Fourier space. The observed datas is the superpostion of cosmological signal modes and systematics modes. Computing a correlation function or power spectrum in Fourier space ``projects" the data onto the basis function's modes. The template subtraction method builds a model for each systematic and subtracts the model in Fourier space (or divides by it in configuration space), while the mode projection method increases the covariance matrix of the data at modes where each systematic is strongest.
@@ -301,7 +301,7 @@ We present a new method for removing imaging systematics from future and ongoing
 %These assumptions will likely break down in the next generation of galaxy surveys, such as the Legacy Surveys (aka DECaLS, MzLS, and BASS) \red{CITE OVERVIEW PAPER}. 
 %The Legacy Surveys take images with three telescopes and leverage existing imaging from Wide-field Infrared Survey Explorer (WISE) \red{cite} to detect galaxies. 
 
-This paper is structured as follows. In \S\,\ref{sec:data}, we describe the imaging and spectroscopic data we use and the eBOSS ELG target selection criteria. In \S\,\ref{sec:methods}, we summarize how \obiwan\, and \tractor\, work, the algorithms we use for removing imaging systematics, and the angular correlation function is estimated from a LSS catalogue. In \S\,\ref{sec:results}, we present our \obiwan\, Monte-Carlo simulations of the same imaging data used to select eBOSS ELGs, and the resulting angular correlation functions. We conclude in \S\,\ref{sec:conclusions}. The Appendix presents biases and systematics in the Legacy Surveys image reduction pipeline, and the additional information needed to reproduce our \obiwan\, Monte-Carlo simulations.
+This paper is structured as follows. In \S\,\ref{sec:data}, we describe the imaging and spectroscopic data we use and the eBOSS ELG target selection criteria. In \S\,\ref{sec:methods}, we summarize how \obiwan\, and \tractor\, work, the algorithms we use for removing imaging systematics, and the angular correlation function is estimated from a LSS catalogue. In \S\,\ref{sec:results}, we present our \obiwan\, Monte-Carlo simulations of the imaging data used to select eBOSS ELGs, and the resulting angular correlation functions. We conclude in \S\,\ref{sec:conclusions}. The Appendix presents biases and systematics in the Legacy Surveys image reduction pipeline, and the additional information needed to reproduce our \obiwan\, Monte-Carlo simulations.
 
 \section{Data}
 \label{sec:data}
@@ -346,7 +346,7 @@ eBOSS selected ELGs from DR3-plus \tractor\, catalogues having clean DECaLS phot
 
 \noindent Bright star masks are also applied. For more details see \cite{anand17}.
 
-It was later discovered that \verb|decam_anymask[grz] = 0| is magnitude dependent \red{also redshift biased?} and is removes many good ELG candidates. \verb|decam_allmask[grz] = 0| should have been used instead. Identifying and removing the biases and systematics introduced \verb|decam_anymask[grz] = 0| has proven difficult; fortunately, our \obiwan\, Monte-Carlo simulations will resolve this problem because they provide a set of randoms with and without the \verb|decam_anymask[grz] = 0| cut applied. 
+It was later discovered that \verb|decam_anymask[grz] = 0| is magnitude dependent and removes many good ELG candidates. \verb|decam_allmask[grz] = 0| should have been used instead. Identifying and removing the biases and systematics introduced \verb|decam_anymask[grz] = 0| has proven difficult; fortunately, our \obiwan\, Monte-Carlo simulations will resolve this problem because they provide a set of randoms with and without the \verb|decam_anymask[grz] = 0| cut applied. 
 
 \subsection{Joint Tables of eBOSS Spectra and \tractor\, Catalogue Measurements}
 
@@ -710,7 +710,7 @@ Fig. \ref{fig:tractor-uncertainty} averages out any dependence on \gb, \rband, \
 \end{center}
 \end{figure*}
 
-We say \legacypipe\, recovers a injected source when there is exactly one \tractor\, catalogue source within 1\arcsec of an injected source, and no DR3 \tractor\, catalogue sources within 1\arcsec of the injected source. We chose a 1\arcsec matching radius because \obiwan\, injects sources at the nearest pixel center. This should lead to an RA and Dec offset, between the true centroid and \tractor's measurement, equal to the DECaLS pixel scale of 0.262\arcsec / pixel. Fig. \ref{fig:delta-radec} shows that the offset is larger (0.4\arcsec) but still small enough that 1\arcsec is fine. We think the larger offset is due to co-registry and \tractor's simultaneous fitting of multiple images.
+We say \legacypipe\, recovers a injected source when there is exactly one \tractor\, catalogue source within 1\arcsec of an injected source, and no DR3 \tractor\, catalogue sources within 1\arcsec of the injected source. \obiwan\, injects sources at the nearest pixel center. This should lead to an RA and Dec offset, between the true centroid and \tractor's measurement, equal to the DECaLS pixel scale of 0.262\arcsec / pixel. Fig. \ref{fig:delta-radec} shows that the offset is larger (0.4\arcsec) but still small enough that 1\arcsec is fine. We think the larger offset is due to co-registry and \tractor's simultaneous fitting of multiple images.
 
 \begin{figure}
  \includegraphics[width=7 cm]{delta_dec_vs_delta_ra}
@@ -774,9 +774,9 @@ In principle, we should include the edge-sources in our analysis, but we drop th
 \end{figure}
 
 
-\section{Injecting Realistic ELGs}
+\section{Injecting Realistic eBOSS ELGs}
 
-\subsection{eBOSS ELG Targets}
+\subsection{ELG Targets}
 \label{a:input-sample}
 
 We construct our ``eBOSS'' galaxy sample from the joint tables of \tractor\, catalogues and eboss21, 22, 23 spectra as follows. We assume that all sources \tractor \, classifies as type PSF are compact or unresolved galaxies. We reclassify them as EXP with $\rhalf = \text{avg}(\text{FWHM}) / 2)$, where the average is over all bands. We also reclassify SIMP sources as EXP. We drop COMP sources because these comprise less than 1\% of the sample. 
@@ -813,14 +813,13 @@ We refer to this as our eBOSS sample. The full list of cuts we apply is:
 
 Because the SGC \gb \, mag PDF in Fig \ref{fig:ngc-incomplete} is a step function for $g > 22.825$, a Gaussian Mixture model for the brightness, shape, and redshift distribution of eBOSS ELGs will be inaccurate at the faint \gb \, mag, where most of the ELGs reside. To model the full distribution of ELG properties we bootstrap sample from our eBOSS sample.
 
-\subsection{eBOSS ELG Almost-Targets}
+\subsection{ELG Almost-Targets}
 \label{a:eboss-almost-targets}
 
 We construct our DR3-DEEP2 sample as follows. We match DEEP2 galaxies to the nearest DR3 tractor catalogue sources using a 1\arcsec\, matching radius and keeping the nearest neighbor. We reclassify SIMP and PSF sources as EXP the same way we did for the eBOSS sample (see Section \ref{a:input-sample}), and then apply the following cuts, 
 \begin{itemize}
 \item !NGC
-\item INSERT DEEP2 FLAG THAT SAYS THE OBJECT IS A GALAXY
-\item $0 \le \text{redshift} \le 2$
+\item $0 \le \text{redshift} \le 2$ (heliocentric-corrected)
 \item \verb|brick_primary|
 \item \gb, \rband, \zb $\text{flux} > 0$
 \item \gb, \rband, \zb $\text{flux ivar} > 0$
@@ -840,7 +839,7 @@ We find that the DR3-DEEP2 sample reproduces the brightness, shape, and redshift
 
 \begin{figure}
  \includegraphics[width=\columnwidth]{dr3dp2_redshift_trends}
- \caption{For EXP galaxies, \gb, \rband, \zb, and $\rhalf$ depend on redshift in the same way for the DR3-DEEP2 galaxies (red) and the eBOSS sample (blue). SWAP COLORS SO BLUE IS DR3-DP2 LIKE PREV FIG}
+ \caption{For EXP galaxies, \gb, \rband, \zb, and $\rhalf$ depend on redshift in the same way for the DR3-DEEP2 galaxies (red) and the eBOSS sample (blue).}
  \label{fig:dr3dp2-redshift}
 \end{figure}
 
